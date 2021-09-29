@@ -53,7 +53,7 @@ def convert(value):
     if value >= 1_000_000:
         value = '{:.1f}'.format(value / 1_000_000) + ' M'
     elif value >= 1000:
-        value = '{:.1f}'.format(value / 1000) + ' K'
+        value = '{:.0f}'.format(value / 1000) + ' K'
     return value
 
 def get_depth_for_screener(symbol, depth_volume):
@@ -69,13 +69,14 @@ def get_depth_for_screener(symbol, depth_volume):
         l_depth = l_bids + l_asks
         temp_list = []
         for depth in l_depth:
-            if float(depth[1]) >= depth_volume:
-                percent = abs((current_price-float(depth[0]))/((current_price+float(depth[0]))/2))*100
+            amount = float(depth[1]) * float(depth[0])
+            if amount >= depth_volume:
+                percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
                 if float(percent) <= 5:
                     temp_list.append(ticker.replace('USDT',''))
                     temp_list.append('{:.4f}'.format(float(depth[0])))
                     temp_list.append(convert(float(depth[1])))
-                    temp_list.append(convert(float(depth[0]) * float(depth[1])))
+                    temp_list.append(convert(amount))
                     temp_list.append('{:.2f}'.format(percent) + ' %')
             if temp_list != []:
                 full_list.append(temp_list)
@@ -376,7 +377,7 @@ screener_tab = [
         sg.Radio('от 500К', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_2-'),
         sg.Radio('от 1 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_3-'),
         sg.Radio('от 3 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_4-'),
-        sg.Button('Обновить', button_color=('white',bg_color), key='-reload-')
+        sg.Button('Обновить', button_color=('white', bg_color), pad=((85, 0), 0), key='-reload-')
     ],
 ]
 volume_tab = [
@@ -464,7 +465,7 @@ layout = [
 time = ntplib.NTPClient()
 time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('Binance Client ver.5.0 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('Binance Client ver.5.5 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
