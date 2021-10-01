@@ -418,12 +418,12 @@ screener_tab = [
                 key='-screener_table-')
     ],
     [
-        sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),0), key='-percent_1-'),
-        sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,0), key='-percent_2-'),
-        sg.Radio('< 2 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,0), key='-percent_3-'),
-        sg.Radio('< 3 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_4-'),
-        sg.Radio('< 4 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_5-'),
-        sg.Radio('< 5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_6-', default=True)
+        sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
+        sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
+        sg.Radio('< 2 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_3-'),
+        sg.Radio('< 3 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,4), key='-percent_4-'),
+        sg.Radio('< 4 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,4), key='-percent_5-'),
+        sg.Radio('< 5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,4), key='-percent_6-', default=True)
     ],
     [
         sg.Radio('от 250 K', 'depth_volume', background_color=bg_color_frame, text_color='black', pad=((5,13),(0,5)), key='-rb_1-', default=True),
