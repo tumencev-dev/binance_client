@@ -11,6 +11,7 @@ import requests
 import webbrowser
 import ntplib
 import json
+from time import sleep
 
 # константы
 icon = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAARzSURBVHjafJZLbJRVFMd/9850hvZ7a0ot6SMUSgIkirjDZwgxsTXGqLRVSFiARl6yAFMXSnRpXGjQhQFEIvXRNgqYNhG3uDIKJvKIrDSxNCUBxk4H2pn5vr+LmfJoOz3Jzfe6Of9zzu9+91xTH4ZYGSQeNrAdeAp4AKgDRMUMYIytPCipXOZ8LwE3EL9IHAPOW4SpD0NSMq9IDABZaphNGfK5GAAvTJHEoqYZSorZZtG3pj4IH7Ey56tR1HBuyeeKuJlKClPFBC/MkMTJYiJYab21MrsWc55KWwpTRVCZMyOrODOyClSmMDVDKm1rCwiE2WuBJxYry2RuhqRU5vQ3nWzY5LBhk8PprztJSjGTuRlsyiym8bgF/Jo1v1mCRAyeWMELrwZwIQ8X8rzwWsDgVysgEfmbJWyqZiaeBez8shjyuTIQMzjQTs8Wj/hiAUILoSG5VKBnq8fgQDuQkM8VSaUXzMTOFzAwXYjpaLaMDrTTs9mFv26T6rT07fyXvp1j2JUWrtymZ7PL6Ik2Opot04V4IZKy9wI2xlDIJxRnyjzX5dO1xYexaWg1HNg3weDIdQZHrnNg3wS0GhibpmurR/fzIcWZMoV8gjEGc6+Q40fjjh/JjyLZTCgIBL4c19Pxj5dL0+vVv69VsETgV8cS9b/VJk2v14lDy+V6s+8DmbpQXhTJ8SM5fjSO40fjXhTJpn2Bp9HvO/XBO22CBjlZX90bmwSewNEPRzt08osOgSPw1L2xSW7WFzToYH+bfjrdKYsvm/blhVUBN4jGbTpUYxDq11PLpfIaaXq1Pn2vtRqVK0ugocPtktZKWqvhI+2yBAJX4OvQu63S9GqpvEa//dihpWEomw7lBtF4+j4iSkAlkEGoisfeXdWUqqxmt4lZhALFIBHHMYkMzM65W6JK7UeH2/R+f7PAVUMmVNfTjVUurk4ebtHJoy3VyAN1P9MoJxsKXB18u1kjw20CXzYdzHIYx/GjqwtDDnXsw2bpVof69zTdA7gy+nc3Sbc6dPyjh+S44R3INhPKnwN5rPogN4hEqiKya9tSSa3SpRbpWov272i843z/jkbpWot0sUVSm/ZuX1oJLBXKDe44l+NH46lMtn4/4M1yyGQNBsPE1YROL6HzUcE/4tmXU1z+E9auTHHkszr4O4FlMT8PlvjkSJlC0bCkwdztEBWbMo4fjQHL7t8qYDInSOC7z9P0vgTFK5AOKsBL/4nsKhg+JXreKIMBPzTE8bw/eSINzNvU4zJ4gSF/E/rejKFs6N0M8eUEBNk1YmjY0Lu7stK8kIWcAyRpDJMs0JySGLwI8pPQt0dkjXixVyA4NWTo3Q2kwPMrc2s0nUnj+tFhweu1Gw5MTUFShLNDFU9P9qSwGXDdSra1OhriS+P54boEc27xlgn5nMGpq6RaKBm8UItFDoKkrMcs8Icx9AmKtQSSGLxAFGIoVO9rOq9iNGIL4pzx/BAZQ4LWIbPdVI4tDwJp5iy6OceWuTGXgRvAWYOOIfN7XBb/DwA31yPOSnmqQwAAAABJRU5ErkJggg=='
@@ -18,7 +19,6 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
-screener_list = [[],[]]
 ticker_list = ['BANDUSDT', 'COMPUSDT', 'ENJUSDT', 'MATICUSDT', 'ADAUSDT', 'DOTUSDT', 'XRPUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SUSHIUSDT', 'SOLUSDT', 'BCHUSDT', 'EOSUSDT', 'ALGOUSDT', 'ATOMUSDT', 'EGLDUSDT', 'KSMUSDT', 'LUNAUSDT', 'LINAUSDT', 'AXSUSDT', 'ICPUSDT', 'ALICEUSDT', 'LINKUSDT', 'RUNEUSDT', 'UNIUSDT', 'CHZUSDT', 'FILUSDT', 'NEOUSDT', 'IOTAUSDT', 'MKRUSDT', 'ZILUSDT']
 
 # проверка ключей API и их подгрузка из файла
@@ -49,45 +49,75 @@ def get_depth(symbol, price):
         if price in list[0]:
             return list[1]
 
-def convert(value):
+def convert(value, param):
     if value >= 1_000_000:
         value = '{:.1f}'.format(value / 1_000_000) + ' M'
     elif value >= 1000:
-        value = '{:.0f}'.format(value / 1000) + ' K'
+        if param ==1:
+            value = '{:.1f}'.format(value / 1000) + ' K'
+        else:
+            value = '{:.0f}'.format(value / 1000) + ' K'
     return value
 
-def get_depth_for_screener(symbol, depth_volume):
-    full_list = []
-    row_list = []
-    row_number = 0
-    for ticker in symbol:
-        response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
-        current_price = float(get_price(ticker)['price'])
-        data = json.loads(response.text)
-        l_bids = data['bids']
-        l_asks = data['asks']
-        l_depth = l_bids + l_asks
-        temp_list = []
-        for depth in l_depth:
-            amount = float(depth[1]) * float(depth[0])
-            if amount >= depth_volume:
-                percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
-                if float(percent) <= 5:
-                    temp_list.append(ticker.replace('USDT',''))
-                    temp_list.append('{:.4f}'.format(float(depth[0])))
-                    temp_list.append(convert(float(depth[1])))
-                    temp_list.append(convert(amount))
-                    temp_list.append('{:.2f}'.format(percent) + ' %')
-            if temp_list != []:
-                full_list.append(temp_list)
-                if float(temp_list[1]) - current_price >= 0:
-                    row_list.append((row_number, "lightgreen"))
-                    row_number += 1
-                else:
-                    row_list.append((row_number, "pink"))
-                    row_number += 1
+def get_depth_for_screener(symbol):
+    window['-screener_start-'].update(visible=False)
+    window['-screener_stop-'].update(visible=True)
+    while True:
+        for i in range(1,5):
+            if window[f'-rb_{i}-'].get() == True:
+                if i == 1:
+                    depth_volume = 250000
+                if i == 2:
+                    depth_volume = 500000
+                if i == 3:
+                    depth_volume = 1000000
+                if i == 4:
+                    depth_volume = 3000000
+        full_list = []
+        row_list = []
+        row_number = 0
+        for ticker in symbol:
+            br = 0
+            if event == '-screener_stop-':
+                window['-screener_stop-'].update(visible=False)
+                window['-screener_start-'].update(visible=True)
+                br = 1
+                break
+            response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
+            data = json.loads(response.text)
+            current_price = float(get_price(ticker)['price'])
+            l_bids = data['bids']
+            l_asks = data['asks']
+            l_depth = l_bids + l_asks
             temp_list = []
-    return [full_list, row_list]
+            for depth in l_depth:
+                amount = float(depth[1]) * float(depth[0])
+                if amount >= depth_volume:
+                    percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
+                    if float(percent) <= 5:
+                        temp_list.append(ticker.replace('USDT',''))
+                        temp_list.append('{:.4f}'.format(float(depth[0])))
+                        temp_list.append(convert(float(depth[1]), 1))
+                        temp_list.append(convert(amount, 0))
+                        temp_list.append('{:.2f}'.format(percent) + ' %')
+                if temp_list != []:
+                    full_list.append(temp_list)
+                    if float(temp_list[1]) - current_price >= 0:
+                        row_list.append((row_number, "lightgreen"))
+                        row_number += 1
+                    else:
+                        row_list.append((row_number, "pink"))
+                        row_number += 1
+                temp_list = []
+        if br ==1:
+            break
+        window['-screener_table-'].update(values=full_list, row_colors=row_list)
+        for i in range(0,30):
+            sleep(1)
+            if event == '-screener_stop-':
+                window['-screener_stop-'].update(visible=False)
+                window['-screener_start-'].update(visible=True)
+                break
 
 def copy(text):
     r = Tk()
@@ -362,7 +392,7 @@ orders_tab = [
 ]
 screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
-    [sg.Table(values=screener_list,
+    [sg.Table(values=[],
                 headings=['Тикер','Цена','Объём','Объём в $','До уровня'],
                 num_rows=40,
                 background_color=bg_color_light,
@@ -377,7 +407,8 @@ screener_tab = [
         sg.Radio('от 500К', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_2-'),
         sg.Radio('от 1 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_3-'),
         sg.Radio('от 3 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_4-'),
-        sg.Button('Обновить', button_color=('white', bg_color), pad=((85, 0), 0), key='-reload-')
+        sg.Button('Запустить', button_color=('white', bg_color), size=(18,1), pad=((17, 0), 0), key='-screener_start-'),
+        sg.Button('Остановить', button_color=('white', 'red'), size=(18,1), pad=((17, 0), 0), key='-screener_stop-', visible=False)
     ],
 ]
 volume_tab = [
@@ -439,15 +470,27 @@ instruction_tab = [
     [sg.Text('Функционал в разработке :(', background_color=bg_color_frame, text_color='black', pad=(162,162))]
 ]
 contacts_tab = [
-    [sg.VerticalSeparator(pad=(0,50))],
+    [sg.HorizontalSeparator(pad=(240,40))],
+    [sg.Text('Телеграм-канал T&T Lab', font=('Arial',14, 'bold'), pad=(0,1), background_color=bg_color_frame, text_color='black')],
+    [sg.Button('https://t.me/tat_lab', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_chanell-')],
+    [sg.Text('Чат проекта T&T Lab', font=('Arial',14, 'bold'), pad=(0,(30,1)), background_color=bg_color_frame, text_color='black')],
+    [sg.Button('https://t.me/joinchat/R3lNe6Lw-kw5NTFi', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_chat-')],
+    [sg.VerticalSeparator(pad=(0,60))],
+    [sg.HorizontalSeparator(color='black', pad=(120,0))],
+    [sg.Text('НАШИ КОНТАКТЫ', font=('Arial',14, 'bold'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
+    [sg.HorizontalSeparator(color='black', pad=(80,(0,30)))],
     [
-        sg.HorizontalSeparator(pad=(11,0)),
-        sg.Text('Официальный телеграм-канал:', font=('Arial',14), pad=(0,5), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://t.me/tat_lab', font=('Arial',14), pad=(0,5), button_color=('blue',bg_color_frame), border_width=0, key='-link_chanell-'),
-        sg.HorizontalSeparator(pad=(11,0))
+        sg.Text('Степан', font=('Helvetica', 14), pad=((20,115),1), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://t.me/Steven_92', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven-')
     ],
-    [sg.Text('Ждите обновлений!', font=('Arial',14), background_color=bg_color_frame, text_color='black')],
-    [sg.VerticalSeparator(pad=(0,50))]
+    [sg.Button('tumencev.st@gmail.com', font=('Arial',14), pad=((200,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven_m-')],
+    [sg.VerticalSeparator(pad=(0,15))],
+    [
+        sg.Text('Семён', font=('Helvetica', 14), pad=((10,0),1), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://t.me/semtum', font=('Arial',14), pad=((120,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen-')
+    ],
+    [sg.Button('sstumenss@gmail.com', font=('Arial',14), pad=((200,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen_m-')],
+    [sg.HorizontalSeparator(color='black', pad=(0,(55,2)))]
 ]
 
 layout = [
@@ -488,7 +531,6 @@ while True:
         window['-frame_contacts-'].update(visible=False)
         window['-frame_orders-'].update(visible=True)
     if event == '-btn_screener-':
-        window['-screener_table-'].update(values=screener_list[0], row_colors=screener_list[1])
         window['-btn_screener-'].update(button_color=bg_color_light)
         window['-btn_orders-'].update(button_color=bg_color)
         window['-btn_volume-'].update(button_color=bg_color)
@@ -634,7 +676,17 @@ while True:
         g_secret_key = values['-SECRET_KEY-']
     if event == '-link_chanell-':
         webbrowser.open("https://t.me/tat_lab")
-    if event == '-reload-':
+    if event == '-link_chat-':
+        webbrowser.open("https://t.me/joinchat/R3lNe6Lw-kw5NTFi")
+    if event == '-link_steven-':
+        webbrowser.open("https://t.me/Steven_92")
+    if event == '-link_steven_m-':
+        webbrowser.open("mailto:tumencev.st@gmail.com")
+    if event == '-link_semen-':
+        webbrowser.open("https://t.me/semtum")
+    if event == '-link_semen_m-':
+        webbrowser.open("mailto:sstumenss@gmail.com")
+    if event == '-screener_start-':
         for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
@@ -645,6 +697,5 @@ while True:
                     rb_value = 1000000
                 if i == 4:
                     rb_value = 3000000
-        screener_list = get_depth_for_screener(ticker_list, rb_value)
-        window['-screener_table-'].update(values=screener_list[0], row_colors=screener_list[1])
+        screener_thread = threading.Thread(target=get_depth_for_screener, args=(ticker_list, ), daemon=True).start()
 window.close()
