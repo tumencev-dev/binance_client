@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 from tkinter import Tk
-from PySimpleGUI.PySimpleGUI import HorizontalSeparator
 from binance_f import RequestClient
 from binance_f.constant.test import *
 from binance_f.base.printobject import *
@@ -73,6 +72,22 @@ def get_depth_for_screener(symbol):
                     depth_volume = 1000000
                 if i == 4:
                     depth_volume = 3000000
+        for i in range(1,7):
+            if window[f'-percent_{i}-'].get() == True:
+                if i == 1:
+                    percent_compare = 0.5
+                if i == 2:
+                    percent_compare = 1
+                if i == 3:
+                    percent_compare = 2
+                if i == 4:
+                    percent_compare = 3
+                if i == 5:
+                    percent_compare = 4
+                if i == 6:
+                    percent_compare = 5
+                if i == 7:
+                    percent_compare = 6
         full_list = []
         row_list = []
         row_number = 0
@@ -94,7 +109,7 @@ def get_depth_for_screener(symbol):
                 amount = float(depth[1]) * float(depth[0])
                 if amount >= depth_volume:
                     percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
-                    if float(percent) <= 5:
+                    if float(percent) <= percent_compare:
                         temp_list.append(ticker.replace('USDT',''))
                         temp_list.append('{:.4f}'.format(float(depth[0])))
                         temp_list.append(convert(float(depth[1]), 1))
@@ -394,7 +409,7 @@ screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
                 headings=['Тикер','Цена','Объём','Объём в $','До уровня'],
-                num_rows=40,
+                num_rows=38,
                 background_color=bg_color_light,
                 text_color='black',
                 auto_size_columns=False,
@@ -403,13 +418,21 @@ screener_tab = [
                 key='-screener_table-')
     ],
     [
-        sg.Radio('от 250К', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_1-', default=True),
-        sg.Radio('от 500К', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_2-'),
-        sg.Radio('от 1 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_3-'),
-        sg.Radio('от 3 млн', 'depth_volume', background_color=bg_color_frame, text_color='black', key='-rb_4-'),
-        sg.Button('Запустить', button_color=('white', bg_color), size=(18,1), pad=((17, 0), 0), key='-screener_start-'),
-        sg.Button('Остановить', button_color=('white', 'red'), size=(18,1), pad=((17, 0), 0), key='-screener_stop-', visible=False)
+        sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),0), key='-percent_1-'),
+        sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,0), key='-percent_2-'),
+        sg.Radio('< 2 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,0), key='-percent_3-'),
+        sg.Radio('< 3 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_4-'),
+        sg.Radio('< 4 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_5-'),
+        sg.Radio('< 5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(11,0), key='-percent_6-', default=True)
     ],
+    [
+        sg.Radio('от 250 K', 'depth_volume', background_color=bg_color_frame, text_color='black', pad=((5,13),(0,5)), key='-rb_1-', default=True),
+        sg.Radio('от 500 K', 'depth_volume', background_color=bg_color_frame, text_color='black', pad=((5,3),(0,5)), key='-rb_2-'),
+        sg.Radio('от 1 M', 'depth_volume', background_color=bg_color_frame, text_color='black', pad=((5,16),(0,5)), key='-rb_3-'),
+        sg.Radio('от 3 M', 'depth_volume', background_color=bg_color_frame, text_color='black', pad=((5,5),(0,5)), key='-rb_4-'),
+        sg.Button('Запустить', button_color=('white', bg_color), size=(18,1), pad=((14,0), (0,5)), key='-screener_start-'),
+        sg.Button('Остановить', button_color=('white', bg_color_light), size=(18,1), pad=((14,0), (0,5)), key='-screener_stop-', visible=False)
+    ]
 ]
 volume_tab = [
     [
