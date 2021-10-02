@@ -51,11 +51,17 @@ def get_depth(symbol, price):
 def convert(value, param):
     if value >= 1_000_000:
         value = '{:.1f}'.format(value / 1_000_000) + ' M'
+        if len(value.split('.')[0]) == 1:
+            value += '            $'
+        else:
+            value += '          $'
     elif value >= 1000:
         if param ==1:
             value = '{:.1f}'.format(value / 1000) + ' K'
         else:
             value = '{:.0f}'.format(value / 1000) + ' K'
+    else:
+        value = '{:.0f}'.format(value)
     return value
 
 def get_depth_for_screener(symbol):
@@ -130,7 +136,7 @@ def get_depth_for_screener(symbol):
         if br ==1:
             break
         window['-screener_table-'].update(values=full_list, row_colors=row_list)
-        for i in range(0,30):
+        for i in range(0,10):
             sleep(1)
             if event == '-screener_stop-':
                 window['-screener_stop-'].update(visible=False)
@@ -486,8 +492,8 @@ volume_tab = [
     [sg.HorizontalSeparator(color='black')]
 ]
 settings_tab = [
-    [sg.Text('API_KEY:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(25,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(25,5)), default_text=g_api_key)],
-    [sg.Text('SECRET_KEY:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-SECRET_KEY_IN-'), sg.Input(key='-SECRET_KEY-', pad=((5,32),(5,5)), default_text=g_secret_key)],
+    [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(25,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(25,5)), default_text=g_api_key)],
+    [sg.Text('Secret Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-SECRET_KEY_IN-'), sg.Input(key='-SECRET_KEY-', pad=((5,32),(5,5)), default_text=g_secret_key)],
     [
         sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=(32,(5, 24)), key='-settings_info-'),
         sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,25)))
