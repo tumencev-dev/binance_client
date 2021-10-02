@@ -62,6 +62,7 @@ def get_depth_for_screener(symbol):
     window['-screener_start-'].update(visible=False)
     window['-screener_stop-'].update(visible=True)
     while True:
+        progress = 0
         for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
@@ -92,6 +93,7 @@ def get_depth_for_screener(symbol):
         row_list = []
         row_number = 0
         for ticker in symbol:
+            progress += 1
             br = 0
             if event == '-screener_stop-':
                 window['-screener_stop-'].update(visible=False)
@@ -124,6 +126,7 @@ def get_depth_for_screener(symbol):
                         row_list.append((row_number, "pink"))
                         row_number += 1
                 temp_list = []
+            window['progressbar'].UpdateBar(progress)
         if br ==1:
             break
         window['-screener_table-'].update(values=full_list, row_colors=row_list)
@@ -409,7 +412,7 @@ screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
                 headings=['Тикер','Цена','Объём','Объём в $','До уровня'],
-                num_rows=38,
+                num_rows=37,
                 background_color=bg_color_light,
                 text_color='black',
                 auto_size_columns=False,
@@ -417,6 +420,7 @@ screener_tab = [
                 justification='left',
                 key='-screener_table-')
     ],
+    [sg.ProgressBar(len(ticker_list), orientation='h', size=(43, 5), key='progressbar')],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
