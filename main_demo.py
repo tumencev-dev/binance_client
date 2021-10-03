@@ -541,7 +541,7 @@ layout = [
 time = ntplib.NTPClient()
 time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('Binance Client ver.5.5 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('BinTrade ver.5.5 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
