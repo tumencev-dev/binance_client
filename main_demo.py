@@ -18,7 +18,7 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
-ticker_list = ['BANDUSDT', 'COMPUSDT', 'ENJUSDT', 'MATICUSDT', 'ADAUSDT', 'DOTUSDT', 'XRPUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SUSHIUSDT', 'SOLUSDT', 'BCHUSDT', 'EOSUSDT', 'ALGOUSDT', 'ATOMUSDT', 'EGLDUSDT', 'KSMUSDT', 'LUNAUSDT', 'LINAUSDT', 'AXSUSDT', 'ICPUSDT', 'ALICEUSDT', 'LINKUSDT', 'RUNEUSDT', 'UNIUSDT', 'CHZUSDT', 'FILUSDT', 'NEOUSDT', 'IOTAUSDT', 'MKRUSDT', 'ZILUSDT']
+ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJ', 'SUSHI', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
 
 # проверка ключей API и их подгрузка из файла
 homepath = os.getenv('USERPROFILE')
@@ -645,8 +645,8 @@ while True:
             try:
                 window['-info_orders_1-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_1))).replace('.', ','))
                 window['-info_orders_3-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_2))).replace('.', ','))
-                window['-info_orders_2-'].update("Текущая цуна: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
-                window['-info_orders_4-'].update("Текущая цуна: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
+                window['-info_orders_2-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
+                window['-info_orders_4-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
                 amount1 = 250000 / float(get_price(ticker)['price'])
                 amount2 = 1000000 / float(get_price(ticker)['price'])
                 amount3 = 3000000 / float(get_price(ticker)['price'])
