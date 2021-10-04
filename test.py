@@ -50,3 +50,11 @@
 
 # ticker_list = ['BANDUSDT', 'COMPUSDT', 'ENJUSDT', 'MATICUSDT', 'ADAUSDT', 'DOTUSDT', 'XRPUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SUSHIUSDT', 'SOLUSDT', 'BCHUSDT', 'EOSUSDT', 'ALGOUSDT', 'ATOMUSDT', 'EGLDUSDT', 'KSMUSDT', 'LUNAUSDT', 'LINAUSDT', 'AXSUSDT', 'ICPUSDT', 'ALICEUSDT', 'LINKUSDT', 'RUNEUSDT', 'UNIUSDT', 'CHZUSDT', 'FILUSDT', 'NEOUSDT', 'IOTAUSDT', 'MKRUSDT', 'ZILUSDT']
 # print(len(ticker_list))
+
+import json, requests
+
+def get_price(symbol):
+    response = requests.get(url=f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}")
+    return json.loads(response.text)
+
+print(get_price('BTCUSDT'))

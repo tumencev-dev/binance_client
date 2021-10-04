@@ -64,6 +64,34 @@ def convert(value, param):
         value = '{:.0f}'.format(value)
     return value
 
+def screener_active(ticker, depth_volume, percent_compare, full_list, row_list, row_number):
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
+    data = json.loads(response.text)
+    current_price = float(get_price(ticker)['price'])
+    l_bids = data['bids']
+    l_asks = data['asks']
+    l_depth = l_bids + l_asks
+    temp_list = []
+    for depth in l_depth:
+        amount = float(depth[1]) * float(depth[0])
+        if amount >= depth_volume:
+            percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
+            if float(percent) <= percent_compare:
+                temp_list.append(ticker.replace('USDT',''))
+                temp_list.append('{:.4f}'.format(float(depth[0])))
+                temp_list.append(convert(float(depth[1]), 1))
+                temp_list.append(convert(amount, 0))
+                temp_list.append('{:.2f}'.format(percent) + ' %')
+        if temp_list != []:
+            full_list.append(temp_list)
+            if float(temp_list[1]) - current_price >= 0:
+                row_list.append((row_number, "lightgreen"))
+                row_number += 1
+            else:
+                row_list.append((row_number, "pink"))
+                row_number += 1
+        temp_list = []
+
 def get_depth_for_screener(symbol):
     window['-screener_start-'].update(visible=False)
     window['-screener_stop-'].update(visible=True)
@@ -106,32 +134,8 @@ def get_depth_for_screener(symbol):
                 window['-screener_start-'].update(visible=True)
                 br = 1
                 break
-            response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
-            data = json.loads(response.text)
-            current_price = float(get_price(ticker)['price'])
-            l_bids = data['bids']
-            l_asks = data['asks']
-            l_depth = l_bids + l_asks
-            temp_list = []
-            for depth in l_depth:
-                amount = float(depth[1]) * float(depth[0])
-                if amount >= depth_volume:
-                    percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
-                    if float(percent) <= percent_compare:
-                        temp_list.append(ticker.replace('USDT',''))
-                        temp_list.append('{:.4f}'.format(float(depth[0])))
-                        temp_list.append(convert(float(depth[1]), 1))
-                        temp_list.append(convert(amount, 0))
-                        temp_list.append('{:.2f}'.format(percent) + ' %')
-                if temp_list != []:
-                    full_list.append(temp_list)
-                    if float(temp_list[1]) - current_price >= 0:
-                        row_list.append((row_number, "lightgreen"))
-                        row_number += 1
-                    else:
-                        row_list.append((row_number, "pink"))
-                        row_number += 1
-                temp_list = []
+            threading.Thread(target=screener_active, args=(ticker, depth_volume, percent_compare, full_list, row_list, row_number), daemon=True).start()
+            print(row_number, len(full_list), len(row_list))
             window['progressbar'].UpdateBar(progress)
         if br ==1:
             break
