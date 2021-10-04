@@ -18,7 +18,7 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
-ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJUSDT', 'SUSHIUSDT', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
+ticker_list = ['BTCUSDT', 'XRPUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT']
 
 # проверка ключей API и их подгрузка из файла
 homepath = os.getenv('USERPROFILE')
@@ -67,10 +67,10 @@ def convert(value, param):
 def screener_active(ticker, depth_volume, percent_compare, full_list, row_list, row_number):
     response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
     data = json.loads(response.text)
-    current_price = float(get_price(ticker)['price'])
     l_bids = data['bids']
     l_asks = data['asks']
     l_depth = l_bids + l_asks
+    current_price = float(get_price(ticker)['price'])
     temp_list = []
     for depth in l_depth:
         amount = float(depth[1]) * float(depth[0])
@@ -134,9 +134,11 @@ def get_depth_for_screener(symbol):
                 window['-screener_start-'].update(visible=True)
                 br = 1
                 break
-            threading.Thread(target=screener_active, args=(ticker, depth_volume, percent_compare, full_list, row_list, row_number), daemon=True).start()
+            thread = threading.Thread(target=screener_active, args=(ticker, depth_volume, percent_compare, full_list, row_list, row_number), daemon=True)
+            thread.start()
             print(row_number, len(full_list), len(row_list))
             window['progressbar'].UpdateBar(progress)
+        thread.join()
         if br ==1:
             break
         window['-screener_table-'].update(values=full_list, row_colors=row_list)
