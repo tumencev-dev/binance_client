@@ -51,12 +51,13 @@ def get_depth(symbol, price):
 def convert(value, param):
     if value >= 1_000_000:
         value = '{:.1f}'.format(value / 1_000_000) + ' M'
-        if len(value.split('.')[0]) == 1:
-            value += '            $'
-        else:
-            value += '          $'
+        if param == 0:
+            if len(value.split('.')[0]) == 1:
+                value += '            $'
+            else:
+                value += '          $'
     elif value >= 1000:
-        if param ==1:
+        if param == 1:
             value = '{:.1f}'.format(value / 1000) + ' K'
         else:
             value = '{:.0f}'.format(value / 1000) + ' K'
@@ -176,9 +177,8 @@ def get_depth_for_screener(symbol):
             window['progressbar'].UpdateBar(progress)
             sleep(1)
             if event == '-screener_stop-':
-                window['-screener_stop-'].update(visible=False)
-                window['-screener_start-'].update(visible=True)
-                break
+                window['-screener_stop-'].update(disabled = True)
+        window['-screener_stop-'].update(disabled = False)
 
 def copy(text):
     r = Tk()
@@ -242,7 +242,7 @@ def the_thread_order_by_price(window, set_price, set_quantity, set_long, set_sho
         window['-info-'].update("Не найдены API ключи. Вам необходимо настроить программу -->")
     else:
         ticker = values['-ticker_orders-'].upper() + "USDT"
-        if ticker == "USDT" or len(ticker)<7:
+        if ticker == "USDT" or len(ticker) < 7:
             window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         else:
             try:
