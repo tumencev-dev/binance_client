@@ -58,3 +58,6 @@ def get_price(symbol):
     return json.loads(response.text)
 
 print(get_price('BTCUSDT'))
+
+ticker_list = ['BTCUSDT', 'XRPUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT']
+print(ticker_list.index('BTCUSDT'))

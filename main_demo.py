@@ -18,7 +18,7 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
-ticker_list = ['BTCUSDT', 'XRPUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT']
+ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJUSDT', 'SUSHIUSDT', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
 
 # проверка ключей API и их подгрузка из файла
 homepath = os.getenv('USERPROFILE')
@@ -64,40 +64,8 @@ def convert(value, param):
         value = '{:.0f}'.format(value)
     return value
 
-def screener_active(ticker, depth_volume, percent_compare, full_list, row_list, row_number):
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
-    data = json.loads(response.text)
-    l_bids = data['bids']
-    l_asks = data['asks']
-    l_depth = l_bids + l_asks
-    current_price = float(get_price(ticker)['price'])
-    temp_list = []
-    for depth in l_depth:
-        amount = float(depth[1]) * float(depth[0])
-        if amount >= depth_volume:
-            percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
-            if float(percent) <= percent_compare:
-                temp_list.append(ticker.replace('USDT',''))
-                temp_list.append('{:.4f}'.format(float(depth[0])))
-                temp_list.append(convert(float(depth[1]), 1))
-                temp_list.append(convert(amount, 0))
-                temp_list.append('{:.2f}'.format(percent) + ' %')
-        if temp_list != []:
-            full_list.append(temp_list)
-            if float(temp_list[1]) - current_price >= 0:
-                row_list.append((row_number, "lightgreen"))
-                row_number += 1
-            else:
-                row_list.append((row_number, "pink"))
-                row_number += 1
-        temp_list = []
-
-def get_depth_for_screener(symbol):
-    window['-screener_start-'].update(visible=False)
-    window['-screener_stop-'].update(visible=True)
-    while True:
-        progress = 0
-        for i in range(1,5):
+def screener_active(ticker, dict_data, dict_row, key):
+    for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
                     depth_volume = 250000
@@ -107,42 +75,105 @@ def get_depth_for_screener(symbol):
                     depth_volume = 1000000
                 if i == 4:
                     depth_volume = 3000000
-        for i in range(1,7):
-            if window[f'-percent_{i}-'].get() == True:
-                if i == 1:
-                    percent_compare = 0.5
-                if i == 2:
-                    percent_compare = 1
-                if i == 3:
-                    percent_compare = 2
-                if i == 4:
-                    percent_compare = 3
-                if i == 5:
-                    percent_compare = 4
-                if i == 6:
-                    percent_compare = 5
-                if i == 7:
-                    percent_compare = 6
+    for i in range(1,7):
+        if window[f'-percent_{i}-'].get() == True:
+            if i == 1:
+                percent_compare = 0.5
+            if i == 2:
+                percent_compare = 1
+            if i == 3:
+                percent_compare = 2
+            if i == 4:
+                percent_compare = 3
+            if i == 5:
+                percent_compare = 4
+            if i == 6:
+                percent_compare = 5
+            if i == 7:
+                percent_compare = 6
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
+    data = json.loads(response.text)
+    l_bids = data['bids']
+    l_asks = data['asks']
+    l_depth = l_bids + l_asks
+    current_price = float(get_price(ticker)['price'])
+    temp_list_depth = []
+    temp_list_depth_full = []
+    temp_list_row = []
+    row_number = 1
+    for depth in l_depth:
+        amount = float(depth[1]) * float(depth[0])
+        if amount >= depth_volume:
+            percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
+            if float(percent) <= percent_compare:
+                temp_list_depth.append(ticker.replace('USDT',''))
+                temp_list_depth.append('{:.4f}'.format(float(depth[0])))
+                temp_list_depth.append(convert(float(depth[1]), 1))
+                temp_list_depth.append(convert(amount, 0))
+                temp_list_depth.append('{:.2f}'.format(percent) + ' %')
+        if temp_list_depth != []:
+            temp_list_depth_full.append(temp_list_depth)
+            if float(temp_list_depth[1]) - current_price >= 0:
+                temp_list_row.append([row_number, "lightgreen"])
+                row_number += 1
+            else:
+                temp_list_row.append([row_number, "pink"])
+                row_number += 1
+        temp_list_depth = []
+    dict_data[key] = temp_list_depth_full
+    dict_row[key] = temp_list_row
+
+def get_depth_for_screener(symbol):
+    window['-screener_start-'].update(visible=False)
+    window['-screener_stop-'].update(visible=True)
+    while True:
+        progress = 0
         full_list = []
         row_list = []
-        row_number = 0
+        temp_dict_depth = {}
+        temp_dict_row = {}
+        thread = []
         for ticker in symbol:
-            progress += 1
             br = 0
             if event == '-screener_stop-':
                 window['-screener_stop-'].update(visible=False)
                 window['-screener_start-'].update(visible=True)
                 br = 1
                 break
-            thread = threading.Thread(target=screener_active, args=(ticker, depth_volume, percent_compare, full_list, row_list, row_number), daemon=True)
-            thread.start()
-            print(row_number, len(full_list), len(row_list))
+            tr = threading.Thread(target=screener_active, args=(
+                ticker,
+                temp_dict_depth,
+                temp_dict_row,
+                symbol.index(ticker)
+                ), daemon=True)
+            thread.append(tr)
+            tr.start()
+        for i in range(0, len(symbol)):
+            if br ==1:
+                break
+            tr = thread[i]
+            tr.join()
+            progress += 1
             window['progressbar'].UpdateBar(progress)
-        thread.join()
+        for i in range(0, len(ticker_list)):
+            if br ==1:
+                break
+            if temp_dict_row[i] != []:
+                number = len(row_list) - 1
+                for k in range(0, len(temp_dict_row[i])):
+                    temp_tuple_row = ((number + temp_dict_row[i][k][0]), temp_dict_row[i][k][1])
+                    row_list.append(temp_tuple_row)
+            data_list = temp_dict_depth[i]
+            for j in range(0, len(data_list)):
+                if br ==1:
+                    break
+                full_list.append(data_list[j])
         if br ==1:
             break
         window['-screener_table-'].update(values=full_list, row_colors=row_list)
-        for i in range(0,10):
+        for i in range(0,60):
+            progress += 1
+            window['progressbar'].UpdateBar(progress)
             sleep(1)
             if event == '-screener_stop-':
                 window['-screener_stop-'].update(visible=False)
@@ -432,7 +463,7 @@ screener_tab = [
                 justification='left',
                 key='-screener_table-')
     ],
-    [sg.ProgressBar(len(ticker_list), orientation='h', size=(43, 5), key='progressbar')],
+    [sg.ProgressBar(60 + len(ticker_list), orientation='h', size=(43, 5), key='progressbar')],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
@@ -547,7 +578,7 @@ layout = [
 time = ntplib.NTPClient()
 time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('BinTrade ver.5.5 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('BinTrade ver.5.8 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
