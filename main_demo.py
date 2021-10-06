@@ -14,6 +14,7 @@ from time import sleep
 
 # константы
 icon = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAARzSURBVHjafJZLbJRVFMd/9850hvZ7a0ot6SMUSgIkirjDZwgxsTXGqLRVSFiARl6yAFMXSnRpXGjQhQFEIvXRNgqYNhG3uDIKJvKIrDSxNCUBxk4H2pn5vr+LmfJoOz3Jzfe6Of9zzu9+91xTH4ZYGSQeNrAdeAp4AKgDRMUMYIytPCipXOZ8LwE3EL9IHAPOW4SpD0NSMq9IDABZaphNGfK5GAAvTJHEoqYZSorZZtG3pj4IH7Ey56tR1HBuyeeKuJlKClPFBC/MkMTJYiJYab21MrsWc55KWwpTRVCZMyOrODOyClSmMDVDKm1rCwiE2WuBJxYry2RuhqRU5vQ3nWzY5LBhk8PprztJSjGTuRlsyiym8bgF/Jo1v1mCRAyeWMELrwZwIQ8X8rzwWsDgVysgEfmbJWyqZiaeBez8shjyuTIQMzjQTs8Wj/hiAUILoSG5VKBnq8fgQDuQkM8VSaUXzMTOFzAwXYjpaLaMDrTTs9mFv26T6rT07fyXvp1j2JUWrtymZ7PL6Ik2Opot04V4IZKy9wI2xlDIJxRnyjzX5dO1xYexaWg1HNg3weDIdQZHrnNg3wS0GhibpmurR/fzIcWZMoV8gjEGc6+Q40fjjh/JjyLZTCgIBL4c19Pxj5dL0+vVv69VsETgV8cS9b/VJk2v14lDy+V6s+8DmbpQXhTJ8SM5fjSO40fjXhTJpn2Bp9HvO/XBO22CBjlZX90bmwSewNEPRzt08osOgSPw1L2xSW7WFzToYH+bfjrdKYsvm/blhVUBN4jGbTpUYxDq11PLpfIaaXq1Pn2vtRqVK0ugocPtktZKWqvhI+2yBAJX4OvQu63S9GqpvEa//dihpWEomw7lBtF4+j4iSkAlkEGoisfeXdWUqqxmt4lZhALFIBHHMYkMzM65W6JK7UeH2/R+f7PAVUMmVNfTjVUurk4ebtHJoy3VyAN1P9MoJxsKXB18u1kjw20CXzYdzHIYx/GjqwtDDnXsw2bpVof69zTdA7gy+nc3Sbc6dPyjh+S44R3INhPKnwN5rPogN4hEqiKya9tSSa3SpRbpWov272i843z/jkbpWot0sUVSm/ZuX1oJLBXKDe44l+NH46lMtn4/4M1yyGQNBsPE1YROL6HzUcE/4tmXU1z+E9auTHHkszr4O4FlMT8PlvjkSJlC0bCkwdztEBWbMo4fjQHL7t8qYDInSOC7z9P0vgTFK5AOKsBL/4nsKhg+JXreKIMBPzTE8bw/eSINzNvU4zJ4gSF/E/rejKFs6N0M8eUEBNk1YmjY0Lu7stK8kIWcAyRpDJMs0JySGLwI8pPQt0dkjXixVyA4NWTo3Q2kwPMrc2s0nUnj+tFhweu1Gw5MTUFShLNDFU9P9qSwGXDdSra1OhriS+P54boEc27xlgn5nMGpq6RaKBm8UItFDoKkrMcs8Icx9AmKtQSSGLxAFGIoVO9rOq9iNGIL4pzx/BAZQ4LWIbPdVI4tDwJp5iy6OceWuTGXgRvAWYOOIfN7XBb/DwA31yPOSnmqQwAAAABJRU5ErkJggg=='
+logo_image = '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'
 bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
@@ -540,26 +541,43 @@ instruction_tab = [
     [sg.Text('Функционал в разработке :(', background_color=bg_color_frame, text_color='black', pad=(162,162))]
 ]
 contacts_tab = [
-    [sg.HorizontalSeparator(pad=(240,40))],
-    [sg.Text('Телеграм-канал T&T Lab', font=('Arial',14, 'bold'), pad=(0,1), background_color=bg_color_frame, text_color='black')],
-    [sg.Button('https://t.me/tat_lab', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_chanell-')],
-    [sg.Text('Чат проекта T&T Lab', font=('Arial',14, 'bold'), pad=(0,(30,1)), background_color=bg_color_frame, text_color='black')],
-    [sg.Button('https://t.me/joinchat/R3lNe6Lw-kw5NTFi', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_chat-')],
-    [sg.VerticalSeparator(pad=(0,60))],
-    [sg.HorizontalSeparator(color='black', pad=(120,0))],
-    [sg.Text('НАШИ КОНТАКТЫ', font=('Arial',14, 'bold'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
-    [sg.HorizontalSeparator(color='black', pad=(80,(0,30)))],
+    [sg.HorizontalSeparator(pad=(240,10))],
+    [sg.Image(data=logo_image, background_color=bg_color_frame)],
+    [sg.VerticalSeparator(pad=(0,10))],
+    [sg.Text('Мы ждём вас на наших ресурсах:', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [
-        sg.Text('Степан', font=('Helvetica', 14), pad=((20,115),1), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://t.me/Steven_92', font=('Arial',14), pad=(0,1), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven-')
+        sg.Text('Telegram – канал «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://vk.cc/c6tYRC', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_chanell-')
     ],
-    [sg.Button('tumencev.st@gmail.com', font=('Arial',14), pad=((200,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven_m-')],
-    [sg.VerticalSeparator(pad=(0,15))],
     [
-        sg.Text('Семён', font=('Helvetica', 14), pad=((10,0),1), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://t.me/semtum', font=('Arial',14), pad=((120,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen-')
+        sg.Text('Telegram – чат «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://vk.cc/c6tYKD', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_chat-')
     ],
-    [sg.Button('sstumenss@gmail.com', font=('Arial',14), pad=((200,0),1), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen_m-')],
+    [
+        sg.Text('YouTube – канал «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://vk.cc/c6vF8D', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_youtube_chanell-')
+    ],
+    [sg.VerticalSeparator(pad=(0,10))],
+    [sg.Text('Наши контакты:', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
+    [
+        sg.Text('Степан', font=('Helvetica', 10), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://t.me/Steven_92', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven-'),
+        sg.Button('tumencev.st@gmail.com', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven_m-')
+    ],
+    [
+        sg.Text('Семён', font=('Helvetica', 10), background_color=bg_color_frame, text_color='black'),
+        sg.Button('https://t.me/semtum', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen-'),
+        sg.Button('sstumenss@gmail.com', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen_m-')
+    ],
+    [sg.VerticalSeparator(pad=(0,10))],
+    [sg.Text('Ваша Благодарность – Лучшая Мотивация!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
+    [sg.HorizontalSeparator(color='black', pad=(80,(0,10)))],
+    [sg.Button('https://yoomoney.ru/to/410013748961839', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_donat-')],
+    [sg.Text('или', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
+    [sg.Button('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-copy_keep-')],
+    [sg.Text('Tether (USDT): Сеть: TRX Tron (TRC20)', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
+    [sg.VerticalSeparator(pad=(0,20))],
+    [sg.Text('Увидимся в стакане, коллеги!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [sg.HorizontalSeparator(color='black', pad=(0,(55,2)))]
 ]
 
@@ -745,9 +763,11 @@ while True:
         g_api_key = values['-API_KEY-']
         g_secret_key = values['-SECRET_KEY-']
     if event == '-link_chanell-':
-        webbrowser.open("https://t.me/tat_lab")
+        webbrowser.open("https://vk.cc/c6tYRC")
     if event == '-link_chat-':
-        webbrowser.open("https://t.me/joinchat/R3lNe6Lw-kw5NTFi")
+        webbrowser.open("https://vk.cc/c6tYKD")
+    if event == '-link_youtube_chanell-':
+        webbrowser.open("https://vk.cc/c6vF8D")
     if event == '-link_steven-':
         webbrowser.open("https://t.me/Steven_92")
     if event == '-link_steven_m-':
@@ -756,6 +776,11 @@ while True:
         webbrowser.open("https://t.me/semtum")
     if event == '-link_semen_m-':
         webbrowser.open("mailto:sstumenss@gmail.com")
+    if event == '-link_donat-':
+        webbrowser.open("https://yoomoney.ru/to/410013748961839")
+    if event == '-copy_keep-':
+        copy('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf')
+        sg.popup_quick_message('Скопировано')
     if event == '-screener_start-':
         for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
