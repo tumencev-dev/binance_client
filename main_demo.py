@@ -159,7 +159,6 @@ def get_depth_for_screener(symbol):
             tr.join()
             progress += 1
             window['progressbar'].UpdateBar(progress)
-            
         try:
             for i in range(0, len(ticker_list)):
                 if br ==1:
@@ -618,7 +617,7 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-    if time_response.orig_time >= 1634256000:
+    if time_response.orig_time >= 1635724800:
         window['-info-'].update("Пробный период закончился. Запросите новую версию у разработчика.", text_color="RED")
         continue
     if event == '-btn_orders-':
