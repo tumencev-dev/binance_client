@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from tkinter import Event, Tk
+from tkinter import Tk
 from binance_f import RequestClient
 from binance_f.constant.test import *
 from binance_f.base.printobject import *
@@ -38,11 +38,11 @@ else:
 
 # функции
 def get_price(symbol):
-    response = requests.get(url=f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}")
+    response = requests.get(url=f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}", timeout=5)
     return json.loads(response.text)
 
 def get_depth(symbol, price):
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=500")
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=500", timeout=5)
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
@@ -95,7 +95,7 @@ def screener_active(ticker, dict_data, dict_row, key):
                 percent_compare = 5
             if i == 7:
                 percent_compare = 6
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500", timeout=5)
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
