@@ -159,22 +159,28 @@ def get_depth_for_screener(symbol):
             tr.join()
             progress += 1
             window['progressbar'].UpdateBar(progress)
-        for i in range(0, len(ticker_list)):
-            if br ==1:
-                break
-            if temp_dict_row[i] != []:
-                number = len(row_list) - 1
-                for k in range(0, len(temp_dict_row[i])):
-                    temp_tuple_row = ((number + temp_dict_row[i][k][0]), temp_dict_row[i][k][1])
-                    row_list.append(temp_tuple_row)
-            data_list = temp_dict_depth[i]
-            for j in range(0, len(data_list)):
+            
+        try:
+            for i in range(0, len(ticker_list)):
                 if br ==1:
                     break
-                full_list.append(data_list[j])
-        if br ==1:
-            break
-        window['-screener_table-'].update(values=full_list, row_colors=row_list)
+                if temp_dict_row[i] != []:
+                    number = len(row_list) - 1
+                    for k in range(0, len(temp_dict_row[i])):
+                        temp_tuple_row = ((number + temp_dict_row[i][k][0]), temp_dict_row[i][k][1])
+                        row_list.append(temp_tuple_row)
+                data_list = temp_dict_depth[i]
+                for j in range(0, len(data_list)):
+                    if br ==1:
+                        break
+                    full_list.append(data_list[j])
+            window['-screener_stop-'].update(button_color=('white', bg_color_light))
+        except:
+            window['-screener_stop-'].update(button_color=('white', 'red'))
+        else:
+            if br ==1:
+                break
+            window['-screener_table-'].update(values=full_list, row_colors=row_list)
         for i in range(0,60):
             progress += 1
             window['progressbar'].UpdateBar(progress)
@@ -467,7 +473,7 @@ screener_tab = [
                 justification='left',
                 key='-screener_table-')
     ],
-    [sg.ProgressBar(60 + len(ticker_list), orientation='h', size=(43, 5), key='progressbar')],
+    [sg.ProgressBar(60 + len(ticker_list), orientation='h', bar_color=('green', bg_color_frame), size=(43, 5), key='progressbar')],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
@@ -794,15 +800,5 @@ while True:
     if event == '-link_instruction-':
         webbrowser.open("https://disk.yandex.ru/i/0UkkcWdY0UCSEw")
     if event == '-screener_start-':
-        for i in range(1,5):
-            if window[f'-rb_{i}-'].get() == True:
-                if i == 1:
-                    rb_value = 250000
-                if i == 2:
-                    rb_value = 500000
-                if i == 3:
-                    rb_value = 1000000
-                if i == 4:
-                    rb_value = 3000000
-        screener_thread = threading.Thread(target=get_depth_for_screener, args=(ticker_list, ), daemon=True).start()
+        threading.Thread(target=get_depth_for_screener, args=(ticker_list, ), daemon=True).start()
 window.close()
