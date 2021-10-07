@@ -180,13 +180,18 @@ def get_depth_for_screener(symbol):
             if br ==1:
                 break
             window['-screener_table-'].update(values=full_list, row_colors=row_list)
+        stop_screener = 0
         for i in range(0,60):
             progress += 1
             window['progressbar'].UpdateBar(progress)
+            if stop_screener == 1:
+                timer = str((60 + len(ticker_list)) - progress)
+                window['-screener_stop-'].update(timer)
             sleep(1)
             if event == '-screener_stop-':
                 window['-screener_stop-'].update(disabled = True)
-        window['-screener_stop-'].update(disabled = False)
+                stop_screener = 1
+        window['-screener_stop-'].update('Остановить', disabled = False)
 
 def copy(text):
     r = Tk()
