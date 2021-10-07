@@ -192,6 +192,10 @@ def get_depth_for_screener(symbol):
                 window['-screener_stop-'].update(disabled = True)
                 stop_screener = 1
         window['-screener_stop-'].update('Остановить', disabled = False)
+        if stop_screener == 1:
+            window['-screener_start-'].update(visible=True)
+            window['-screener_stop-'].update(visible=False)
+            break
 
 def copy(text):
     r = Tk()
