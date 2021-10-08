@@ -572,34 +572,34 @@ contacts_tab = [
     [sg.Text('Мы ждём вас на наших ресурсах:', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [
         sg.Text('Telegram – канал «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://vk.cc/c6tYRC', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_chanell-')
+        sg.Button('https://vk.cc/c6tYRC', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_chanell-')
     ],
     [
         sg.Text('Telegram – чат «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://vk.cc/c6tYKD', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_chat-')
+        sg.Button('https://vk.cc/c6tYKD', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_chat-')
     ],
     [
         sg.Text('YouTube – канал «T&T Lab»', font=('Arial',10, 'bold'), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://vk.cc/c6vF8D', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_youtube_chanell-')
+        sg.Button('https://vk.cc/c6vF8D', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_youtube_chanell-')
     ],
     [sg.VerticalSeparator(pad=(0,10))],
     [sg.Text('Наши контакты:', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [
         sg.Text('Степан', font=('Helvetica', 10), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://t.me/Steven_92', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven-'),
-        sg.Button('tumencev.st@gmail.com', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_steven_m-')
+        sg.Button('https://t.me/Steven_92', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_steven-'),
+        sg.Button('tumencev.st@gmail.com', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_steven_m-')
     ],
     [
         sg.Text('Семён', font=('Helvetica', 10), background_color=bg_color_frame, text_color='black'),
-        sg.Button('https://t.me/semtum', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen-'),
-        sg.Button('sstumenss@gmail.com', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_semen_m-')
+        sg.Button('https://t.me/semtum', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_semen-'),
+        sg.Button('sstumenss@gmail.com', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_semen_m-')
     ],
     [sg.VerticalSeparator(pad=(0,10))],
     [sg.Text('Ваша Благодарность – Лучшая Мотивация!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [sg.HorizontalSeparator(color='black', pad=(80,(0,10)))],
-    [sg.Button('https://yoomoney.ru/to/410013748961839', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-link_donat-')],
+    [sg.Button('https://yoomoney.ru/to/410013748961839', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_donat-')],
     [sg.Text('или', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
-    [sg.Button('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf', font=('Arial',10), button_color=('blue',bg_color_frame), border_width=0, key='-copy_keep-')],
+    [sg.Button('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-copy_keep-')],
     [sg.Text('Tether (USDT): Сеть: TRX Tron (TRC20)', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
     [sg.Text('Увидимся в стакане, коллеги!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black')],
     [sg.HorizontalSeparator(color='black', pad=(0,(58,2)))]
