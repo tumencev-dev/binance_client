@@ -11,6 +11,7 @@ import webbrowser
 import ntplib
 import json
 from time import sleep
+from datetime import datetime
 
 # константы
 icon = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAARzSURBVHjafJZLbJRVFMd/9850hvZ7a0ot6SMUSgIkirjDZwgxsTXGqLRVSFiARl6yAFMXSnRpXGjQhQFEIvXRNgqYNhG3uDIKJvKIrDSxNCUBxk4H2pn5vr+LmfJoOz3Jzfe6Of9zzu9+91xTH4ZYGSQeNrAdeAp4AKgDRMUMYIytPCipXOZ8LwE3EL9IHAPOW4SpD0NSMq9IDABZaphNGfK5GAAvTJHEoqYZSorZZtG3pj4IH7Ey56tR1HBuyeeKuJlKClPFBC/MkMTJYiJYab21MrsWc55KWwpTRVCZMyOrODOyClSmMDVDKm1rCwiE2WuBJxYry2RuhqRU5vQ3nWzY5LBhk8PprztJSjGTuRlsyiym8bgF/Jo1v1mCRAyeWMELrwZwIQ8X8rzwWsDgVysgEfmbJWyqZiaeBez8shjyuTIQMzjQTs8Wj/hiAUILoSG5VKBnq8fgQDuQkM8VSaUXzMTOFzAwXYjpaLaMDrTTs9mFv26T6rT07fyXvp1j2JUWrtymZ7PL6Ik2Opot04V4IZKy9wI2xlDIJxRnyjzX5dO1xYexaWg1HNg3weDIdQZHrnNg3wS0GhibpmurR/fzIcWZMoV8gjEGc6+Q40fjjh/JjyLZTCgIBL4c19Pxj5dL0+vVv69VsETgV8cS9b/VJk2v14lDy+V6s+8DmbpQXhTJ8SM5fjSO40fjXhTJpn2Bp9HvO/XBO22CBjlZX90bmwSewNEPRzt08osOgSPw1L2xSW7WFzToYH+bfjrdKYsvm/blhVUBN4jGbTpUYxDq11PLpfIaaXq1Pn2vtRqVK0ugocPtktZKWqvhI+2yBAJX4OvQu63S9GqpvEa//dihpWEomw7lBtF4+j4iSkAlkEGoisfeXdWUqqxmt4lZhALFIBHHMYkMzM65W6JK7UeH2/R+f7PAVUMmVNfTjVUurk4ebtHJoy3VyAN1P9MoJxsKXB18u1kjw20CXzYdzHIYx/GjqwtDDnXsw2bpVof69zTdA7gy+nc3Sbc6dPyjh+S44R3INhPKnwN5rPogN4hEqiKya9tSSa3SpRbpWov272i843z/jkbpWot0sUVSm/ZuX1oJLBXKDe44l+NH46lMtn4/4M1yyGQNBsPE1YROL6HzUcE/4tmXU1z+E9auTHHkszr4O4FlMT8PlvjkSJlC0bCkwdztEBWbMo4fjQHL7t8qYDInSOC7z9P0vgTFK5AOKsBL/4nsKhg+JXreKIMBPzTE8bw/eSINzNvU4zJ4gSF/E/rejKFs6N0M8eUEBNk1YmjY0Lu7stK8kIWcAyRpDJMs0JySGLwI8pPQt0dkjXixVyA4NWTo3Q2kwPMrc2s0nUnj+tFhweu1Gw5MTUFShLNDFU9P9qSwGXDdSra1OhriS+P54boEc27xlgn5nMGpq6RaKBm8UItFDoKkrMcs8Icx9AmKtQSSGLxAFGIoVO9rOq9iNGIL4pzx/BAZQ4LWIbPdVI4tDwJp5iy6OceWuTGXgRvAWYOOIfN7XBb/DwA31yPOSnmqQwAAAABJRU5ErkJggg=='
@@ -21,6 +22,7 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
+full_list, old_full_list = [], []
 ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SHIBUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJUSDT', 'SUSHIUSDT', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
 
 # проверка ключей API и их подгрузка из файла
@@ -38,11 +40,11 @@ else:
 
 # функции
 def get_price(symbol):
-    response = requests.get(url=f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}", timeout=5)
+    response = requests.get(url=f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}")
     return json.loads(response.text)
 
 def get_depth(symbol, price):
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=500", timeout=5)
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={symbol}&limit=500")
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
@@ -50,6 +52,55 @@ def get_depth(symbol, price):
     for list in l_depth:
         if price in list[0]:
             return list[1]
+
+def get_info(window):
+    window['-info-'].update("Здесь будет выводиться информация о работе программы :)")
+    ticker = values['-ticker_volume-'].upper() + "USDT"
+    price_1 = float(values['-price_1-'].replace(",", "."))
+    price_2 = float(values['-price_3-'].replace(",", "."))
+    price_1 = '{:.4f}'.format(price_1).replace(",", ".")
+    price_2 = '{:.4f}'.format(price_2).replace(",", ".")
+    if ticker == "USDT" or len(ticker) < 7:
+        window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
+        window['-copy1-'].update(disabled=True)
+        window['-copy2-'].update(disabled=True)
+        window['-copy3-'].update(disabled=True)
+        window['-copy4-'].update(disabled=True)
+        window['-copy5-'].update(disabled=True)
+        window['-copy6-'].update(disabled=True)
+    else:
+        try:
+            if price_1 != '0.0000':
+                window['-info_orders_1-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_1))).replace('.', ','))
+            if price_2 != '0.0000':
+                window['-info_orders_3-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_2))).replace('.', ','))
+            window['-info_orders_2-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
+            window['-info_orders_4-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
+            amount1 = 250000 / float(get_price(ticker)['price'])
+            amount2 = 1000000 / float(get_price(ticker)['price'])
+            amount3 = 3000000 / float(get_price(ticker)['price'])
+            amount4 = 2000000 / float(get_price(ticker)['price'])
+            amount5 = 5000000 / float(get_price(ticker)['price'])
+            window['-big_volume_1-'].update('{:.2f}'.format(amount1).replace('.', ','))
+            window['-big_volume_2-'].update('{:.2f}'.format(amount2).replace('.', ','))
+            window['-big_volume_3-'].update('{:.2f}'.format(amount2).replace('.', ','))
+            window['-big_volume_4-'].update('{:.2f}'.format(amount3).replace('.', ','))
+            window['-big_volume_5-'].update('{:.2f}'.format(amount4).replace('.', ','))
+            window['-big_volume_6-'].update('{:.2f}'.format(amount5).replace('.', ','))
+            window['-copy1-'].update(disabled=False)
+            window['-copy2-'].update(disabled=False)
+            window['-copy3-'].update(disabled=False)
+            window['-copy4-'].update(disabled=False)
+            window['-copy5-'].update(disabled=False)
+            window['-copy6-'].update(disabled=False)
+        except:
+            window['-info-'].update("Ошибка в рассчетах! Повторите ввод")
+            window['-copy1-'].update(disabled=True)
+            window['-copy2-'].update(disabled=True)
+            window['-copy3-'].update(disabled=True)
+            window['-copy4-'].update(disabled=True)
+            window['-copy5-'].update(disabled=True)
+            window['-copy6-'].update(disabled=True)
 
 def convert(value, param):
     if value >= 1_000_000:
@@ -95,7 +146,7 @@ def screener_active(ticker, dict_data, dict_row, key):
                 percent_compare = 5
             if i == 7:
                 percent_compare = 6
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500", timeout=5)
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
@@ -114,6 +165,7 @@ def screener_active(ticker, dict_data, dict_row, key):
                 temp_list_depth.append('{:.4f}'.format(float(depth[0])))
                 temp_list_depth.append(convert(float(depth[1]), 1))
                 temp_list_depth.append(convert(amount, 0))
+                temp_list_depth.append('')
                 temp_list_depth.append('{:.2f}'.format(percent) + ' %')
         if temp_list_depth != []:
             temp_list_depth_full.append(temp_list_depth)
@@ -127,11 +179,14 @@ def screener_active(ticker, dict_data, dict_row, key):
     dict_data[key] = temp_list_depth_full
     dict_row[key] = temp_list_row
 
-def get_depth_for_screener(symbol):
+def get_depth_for_screener(symbol, full_list, old_full_list):
     window['-screener_start-'].update(visible=False)
     window['-screener_stop-'].update(visible=True)
+    timeout = 1
     while True:
         progress = 0
+        if full_list != []:
+            old_full_list = full_list
         full_list = []
         row_list = []
         temp_dict_depth = {}
@@ -173,8 +228,18 @@ def get_depth_for_screener(symbol):
                     if br ==1:
                         break
                     full_list.append(data_list[j])
+                    if old_full_list != []:
+                        for old_element in old_full_list:
+                            if (old_element[0] == full_list[-1][0]) and (old_element[1] == full_list[-1][1]):
+                                if old_element[4] == '':
+                                    full_list[-1][4] = timeout
+                                else:
+                                    full_list[-1][4] = old_element[4] + timeout
+            timeout = 1
             window['-screener_stop-'].update(button_color=('white', bg_color_light))
-        except:
+        except Exception as ex:
+            timeout += 1
+            print(ex)
             window['-screener_stop-'].update(button_color=('white', 'red'))
         else:
             if br ==1:
@@ -223,13 +288,18 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
                 window[set_qty].update(disabled=True)
                 window[set_quantity].update(disabled=True)
                 while True:
+                    #start_time = datetime.now() Закоментированные строки делались для проверки скорости выполнения
                     current_depth = get_depth(ticker, price)
+                    #go_dept_time = datetime.now() - start_time
+                    #print('Time get volume: ', go_dept_time)
+                    #start_time  = datetime.now()
                     if float(current_depth) < qty:
                         request_client = RequestClient(api_key=g_api_key, secret_key=g_secret_key)
                         if values[set_long] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.BUY, quantity=quantity, ordertype=OrderType.MARKET)
                         if values[set_short] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.SELL, quantity=quantity, ordertype=OrderType.MARKET)
+                        #print('Time close orders: ', (datetime.now() - start_time))
                         window[set_info].Update("Код выполнен. Ордера закрыты...")
                         window[set_stop].update(visible=False)
                         window[set_start].update(visible=True)
@@ -472,12 +542,12 @@ orders_tab = [
 screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
-                headings=['Тикер','Цена','Объём','Объём в $','До уровня'],
+                headings=['Тикер','Цена','Объём','Объём в $', 't, мин.', 'До уровня'],
                 num_rows=37,
                 background_color=bg_color_light,
                 text_color='black',
                 auto_size_columns=False,
-                col_widths=[12,14,14,14,12],
+                col_widths=[9, 12, 13, 13, 7, 12],
                 justification='left',
                 key='-screener_table-')
     ],
@@ -709,49 +779,7 @@ while True:
         window['-frame_instruction-'].update(visible=False)
         window['-frame_contacts-'].update(visible=True)
     if event == '-submit-':
-        ticker = values['-ticker_volume-'].upper() + "USDT"
-        price_1 = values['-price_1-'].replace(",", ".")
-        price_2 = values['-price_3-'].replace(",", ".")
-        if ticker == "USDT" or len(ticker) < 7:
-            window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
-            window['-copy1-'].update(disabled=True)
-            window['-copy2-'].update(disabled=True)
-            window['-copy3-'].update(disabled=True)
-            window['-copy4-'].update(disabled=True)
-            window['-copy5-'].update(disabled=True)
-            window['-copy6-'].update(disabled=True)
-        else:
-            try:
-                window['-info_orders_1-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_1))).replace('.', ','))
-                window['-info_orders_3-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_2))).replace('.', ','))
-                window['-info_orders_2-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
-                window['-info_orders_4-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
-                amount1 = 250000 / float(get_price(ticker)['price'])
-                amount2 = 1000000 / float(get_price(ticker)['price'])
-                amount3 = 3000000 / float(get_price(ticker)['price'])
-                amount4 = 2000000 / float(get_price(ticker)['price'])
-                amount5 = 5000000 / float(get_price(ticker)['price'])
-                amount6 = 10000000 / float(get_price(ticker)['price'])
-                window['-big_volume_1-'].update('{:.2f}'.format(amount1).replace('.', ','))
-                window['-big_volume_2-'].update('{:.2f}'.format(amount2).replace('.', ','))
-                window['-big_volume_3-'].update('{:.2f}'.format(amount2).replace('.', ','))
-                window['-big_volume_4-'].update('{:.2f}'.format(amount3).replace('.', ','))
-                window['-big_volume_5-'].update('{:.2f}'.format(amount4).replace('.', ','))
-                window['-big_volume_6-'].update('{:.2f}'.format(amount5).replace('.', ','))
-                window['-copy1-'].update(disabled=False)
-                window['-copy2-'].update(disabled=False)
-                window['-copy3-'].update(disabled=False)
-                window['-copy4-'].update(disabled=False)
-                window['-copy5-'].update(disabled=False)
-                window['-copy6-'].update(disabled=False)
-            except:
-                window['-info-'].update("Binance сообщает что такого тикера не существует! Повторите ввод")
-                window['-copy1-'].update(disabled=True)
-                window['-copy2-'].update(disabled=True)
-                window['-copy3-'].update(disabled=True)
-                window['-copy4-'].update(disabled=True)
-                window['-copy5-'].update(disabled=True)
-                window['-copy6-'].update(disabled=True)
+        threading.Thread(target=get_info, args=(window, ), daemon=True).start()
     if event == '-copy1-':
         copy(values['-big_volume_1-'])
     if event == '-copy2-':
@@ -808,5 +836,5 @@ while True:
     if event == '-link_instruction-':
         webbrowser.open("https://disk.yandex.ru/i/0UkkcWdY0UCSEw")
     if event == '-screener_start-':
-        threading.Thread(target=get_depth_for_screener, args=(ticker_list, ), daemon=True).start()
+        threading.Thread(target=get_depth_for_screener, args=(ticker_list, full_list, old_full_list), daemon=True).start()
 window.close()
