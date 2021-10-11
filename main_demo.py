@@ -722,7 +722,7 @@ layout = [
 time = ntplib.NTPClient()
 time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('BinTrade ver.5.8 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('BinTrade ver.5.9 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
@@ -859,56 +859,79 @@ while True:
     if event == '-screener_start-':
         threading.Thread(target=get_depth_for_screener, args=(ticker_list, full_list, old_full_list), daemon=True).start()
     if event == '-save-':
-        with open(file_path, 'r') as json_file:
-            old_data = json.load(json_file)
-        if 'tickers' in old_data:
-            tickers_dict = {}
-            for list in settings_rows_list:
-                tickers_dict[list[0]] = list[1]
-        new_data = {
-            'settings': {},
-            'tickers': tickers_dict
-        }
-        new_data['settings'] = {
-            'api_key': values['-API_KEY-'],
-            'secret_key': values['-SECRET_KEY-'],
-        }
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
-        window['-settings_info-'].update(text_color='green')
-        g_api_key = values['-API_KEY-']
-        g_secret_key = values['-SECRET_KEY-']
+        if os.path.exists(file_path) == True:
+            with open(file_path, 'r') as json_file:
+                old_data = json.load(json_file)
+            if 'tickers' in old_data:
+                tickers_dict = {}
+                for list in settings_rows_list:
+                    tickers_dict[list[0]] = list[1]
+            new_data = {
+                'settings': {},
+                'tickers': tickers_dict
+            }
+            new_data['settings'] = {
+                'api_key': values['-API_KEY-'],
+                'secret_key': values['-SECRET_KEY-'],
+            }
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
+            window['-settings_info-'].update(text_color='green')
+            g_api_key = values['-API_KEY-']
+            g_secret_key = values['-SECRET_KEY-']
+        else:
+            new_data = {}
+            new_data['settings'] = {
+                'api_key': values['-API_KEY-'],
+                'secret_key': values['-SECRET_KEY-'],
+            }
+            new_data['tickers'] = {}
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
+            window['-settings_info-'].update(text_color='green')
+            g_api_key = values['-API_KEY-']
+            g_secret_key = values['-SECRET_KEY-']
     if event == '-add_row_table-':
         ticker_settings = values['-ticker_settings-']
         volume_settings = values['-volume_settings-']
-        if ticker_settings != '' and volume_settings != '':
-            with open(file_path, 'r') as json_file:
-                old_data = json.load(json_file)
-            if 'settings' in old_data:
-                new_data = {
-                    'settings': {
-                        'api_key': g_api_key,
-                        'secret_key': g_secret_key,
+        if os.path.exists(file_path) == True:
+            if ticker_settings != '' and volume_settings != '':
+                with open(file_path, 'r') as json_file:
+                    old_data = json.load(json_file)
+                if 'settings' in old_data:
+                    new_data = {
+                        'settings': {
+                            'api_key': g_api_key,
+                            'secret_key': g_secret_key,
+                        }
                     }
-                }
-                if 'tickers' in old_data:
-                    new_data['tickers'] = old_data['tickers']
-                    new_data['tickers'][ticker_settings] = volume_settings
+                    if 'tickers' in old_data:
+                        new_data['tickers'] = old_data['tickers']
+                        new_data['tickers'][ticker_settings] = volume_settings
+                    else:
+                        new_data['tickers'] = {}
+                        new_data['tickers'][ticker_settings] = volume_settings
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(new_data, f, ensure_ascii=False, indent=4)
+                temp_variable = 0
+                for list in settings_rows_list:
+                    if list[0] == ticker_settings:
+                        list[1] = volume_settings
+                        temp_variable = 1
+                if temp_variable == 0:
+                    settings_rows_list.append([ticker_settings, volume_settings])
+                    window['-settings_table-'].update(values=settings_rows_list)
                 else:
-                    new_data['tickers'] = {}
-                    new_data['tickers'][ticker_settings] = volume_settings
+                    window['-settings_table-'].update(values=settings_rows_list)
+        else:
+            new_data = {}
+            new_data['settings'] = {}
+            new_data['tickers'] = {}
+            new_data['tickers'][ticker_settings] = volume_settings
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
-            temp_variable = 0
-            for list in settings_rows_list:
-                if list[0] == ticker_settings:
-                    list[1] = volume_settings
-                    temp_variable = 1
-            if temp_variable == 0:
-                settings_rows_list.append([ticker_settings, volume_settings])
-                window['-settings_table-'].update(values=settings_rows_list)
-            else:
-                window['-settings_table-'].update(values=settings_rows_list)
+            settings_rows_list.append([ticker_settings, volume_settings])
+            window['-settings_table-'].update(values=settings_rows_list)
     if event == '-del_row_table-':
         del_ticker = settings_rows_list[values['-settings_table-'][0]][0]
         with open(file_path, 'r') as json_file:
