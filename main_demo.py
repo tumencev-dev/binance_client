@@ -22,7 +22,8 @@ bg_color = '#282828'
 bg_color_light = '#454545'
 bg_color_frame = '#ededed'
 g_api_key, g_secret_key = "", ""
-full_list, old_full_list = [], []
+full_list, old_full_list, settings_rows_list = [], [], []
+settings_rows_dict = {}
 ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SHIBUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJUSDT', 'SUSHIUSDT', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
 
 # проверка ключей API и их подгрузка из файла
@@ -35,6 +36,10 @@ if os.path.exists(folder_path) == True:
             data = json.load(json_file)
             g_api_key = data['settings']['api_key']
             g_secret_key = data['settings']["secret_key"]
+            settings_rows_dict = data['tickers']
+            if settings_rows_dict != {}:
+                for key, value in settings_rows_dict.items():
+                    settings_rows_list.append([key, value])
 else:
     os.mkdir(folder_path)
 
@@ -146,6 +151,9 @@ def screener_active(ticker, dict_data, dict_row, key):
                 percent_compare = 5
             if i == 7:
                 percent_compare = 6
+    for i in range(0, len(settings_rows_list)):
+        if ticker == settings_rows_list[i][0]:
+            depth_volume = float(settings_rows_list[i][1])
     response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
     data = json.loads(response.text)
     l_bids = data['bids']
@@ -618,12 +626,36 @@ volume_tab = [
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
 ]
 settings_tab = [
-    [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(25,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(25,5)), default_text=g_api_key)],
+    [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(5,5)), default_text=g_api_key)],
     [sg.Text('Secret Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-SECRET_KEY_IN-'), sg.Input(key='-SECRET_KEY-', pad=((5,32),(5,5)), default_text=g_secret_key)],
     [
         sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=(32,(5, 24)), key='-settings_info-'),
         sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,25)))
-    ]
+    ],
+    [sg.HorizontalSeparator(color='black')],
+    [sg.Text('', size=(68,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)],
+    [sg.Text('Настройка скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [
+        sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
+        sg.Combo(ticker_list, size=(11,1), key='-ticker_settings-'),
+        sg.Text('Объём в $:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
+        sg.Input(size=(11,1), key='-volume_settings-'),
+        sg.Button('Добавить', key='-add_row_table-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)
+    ],
+    [sg.Table(values=[],
+                headings=['Тикер', 'Объём КО в $'],
+                num_rows=22,
+                background_color=bg_color_light,
+                text_color='white',
+                auto_size_columns=False,
+                col_widths=[33, 33],
+                justification='left',
+                pad=(5,(12,4),),
+                key='-settings_table-')
+    ],
+    [sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((330,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
+    [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
 ]
 instruction_tab = [
     [sg.HorizontalSeparator(pad=(240,5))],
@@ -681,7 +713,7 @@ layout = [
         sg.Frame('', orders_tab, border_width=0, background_color=bg_color_frame, key='-frame_orders-', element_justification="center"),
         sg.Frame('', screener_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_screener-'),
         sg.Frame('', volume_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_volume-'),
-        sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-'),
+        sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-', element_justification="center"),
         sg.Frame('', instruction_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_instruction-', element_justification="center"),
         sg.Frame('', contacts_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_contacts-', element_justification="center")
     ]
@@ -752,6 +784,7 @@ while True:
         window['-frame_contacts-'].update(visible=False)
         window['-settings_info-'].update(text_color=bg_color_frame)
         window['-frame_settings-'].update(visible=True)
+        window['-settings_table-'].update(values=settings_rows_list)
     if event == '-btn_instruction-':
         window['-btn_instruction-'].update(button_color=bg_color_light)
         window['-btn_orders-'].update(button_color=bg_color)
@@ -802,18 +835,6 @@ while True:
         threading.Thread(target=the_thread_order_by_volume, args=(window, '-price_3-', '-qty_3-', '-quantity_3-', '-long_3-', '-short_3-', '-start3-', '-stop3-', '-info_orders_3-'), daemon=True).start()
     if event == '-start4-':
         threading.Thread(target=the_thread_order_by_price, args=(window, '-price_4-', '-quantity_4-', '-long_4-', '-short_4-', '-start4-', '-stop4-', '-info_orders_4-'), daemon=True).start()
-    if event == '-save-':
-        data = {
-            'settings': {
-                'api_key': values['-API_KEY-'],
-                'secret_key': values['-SECRET_KEY-'],
-            }
-        }
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-        window['-settings_info-'].update(text_color='green')
-        g_api_key = values['-API_KEY-']
-        g_secret_key = values['-SECRET_KEY-']
     if event == '-link_chanell-':
         webbrowser.open("https://vk.cc/c6tYRC")
     if event == '-link_chat-':
@@ -837,4 +858,73 @@ while True:
         webbrowser.open("https://disk.yandex.ru/i/0UkkcWdY0UCSEw")
     if event == '-screener_start-':
         threading.Thread(target=get_depth_for_screener, args=(ticker_list, full_list, old_full_list), daemon=True).start()
+    if event == '-save-':
+        with open(file_path, 'r') as json_file:
+            old_data = json.load(json_file)
+        if 'tickers' in old_data:
+            tickers_dict = {}
+            for list in settings_rows_list:
+                tickers_dict[list[0]] = list[1]
+        new_data = {
+            'settings': {},
+            'tickers': tickers_dict
+        }
+        new_data['settings'] = {
+            'api_key': values['-API_KEY-'],
+            'secret_key': values['-SECRET_KEY-'],
+        }
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
+        window['-settings_info-'].update(text_color='green')
+        g_api_key = values['-API_KEY-']
+        g_secret_key = values['-SECRET_KEY-']
+    if event == '-add_row_table-':
+        ticker_settings = values['-ticker_settings-']
+        volume_settings = values['-volume_settings-']
+        if ticker_settings != '' and volume_settings != '':
+            with open(file_path, 'r') as json_file:
+                old_data = json.load(json_file)
+            if 'settings' in old_data:
+                new_data = {
+                    'settings': {
+                        'api_key': g_api_key,
+                        'secret_key': g_secret_key,
+                    }
+                }
+                if 'tickers' in old_data:
+                    new_data['tickers'] = old_data['tickers']
+                    new_data['tickers'][ticker_settings] = volume_settings
+                else:
+                    new_data['tickers'] = {}
+                    new_data['tickers'][ticker_settings] = volume_settings
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
+            temp_variable = 0
+            for list in settings_rows_list:
+                if list[0] == ticker_settings:
+                    list[1] = volume_settings
+                    temp_variable = 1
+            if temp_variable == 0:
+                settings_rows_list.append([ticker_settings, volume_settings])
+                window['-settings_table-'].update(values=settings_rows_list)
+            else:
+                window['-settings_table-'].update(values=settings_rows_list)
+    if event == '-del_row_table-':
+        del_ticker = settings_rows_list[values['-settings_table-'][0]][0]
+        with open(file_path, 'r') as json_file:
+            old_data = json.load(json_file)
+        if 'settings' in old_data:
+            new_data = {
+                'settings': {
+                    'api_key': g_api_key,
+                    'secret_key': g_secret_key,
+                }
+            }
+            if del_ticker in old_data['tickers']:
+                old_data['tickers'].pop(del_ticker, 0)
+                new_data['tickers'] = old_data['tickers']
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=4)
+        settings_rows_list.remove(settings_rows_list[values['-settings_table-'][0]])
+        window['-settings_table-'].update(values=settings_rows_list)
 window.close()
