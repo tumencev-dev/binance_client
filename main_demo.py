@@ -623,7 +623,13 @@ volume_tab = [
         sg.Input(size=(20,1), key='-big_volume_6-', pad=(5,(10,20))),
         sg.Button('Копировать', key='-copy6-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
-    [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
+    [sg.HorizontalSeparator(color='black')],
+    [sg.Text('', size=(67,4), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [
+        sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2),
+        sg.Button('Удвоить x2', key='-double-', size=(15,1), button_color=bg_color_light, mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
+        sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
+    ]
 ]
 settings_tab = [
     [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
@@ -712,7 +718,7 @@ layout = [
     [
         sg.Frame('', orders_tab, border_width=0, background_color=bg_color_frame, key='-frame_orders-', element_justification="center"),
         sg.Frame('', screener_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_screener-'),
-        sg.Frame('', volume_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_volume-'),
+        sg.Frame('', volume_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_volume-', element_justification="center"),
         sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-', element_justification="center"),
         sg.Frame('', instruction_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_instruction-', element_justification="center"),
         sg.Frame('', contacts_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_contacts-', element_justification="center")
