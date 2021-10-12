@@ -864,7 +864,7 @@ while True:
         webbrowser.open("https://yoomoney.ru/to/410013748961839")
     if event == '-copy_keep-':
         copy('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf')
-        sg.popup_quick_message('Скопировано')
+        sg.popup_quick_message('Скопировано', background_color='#2b5279', text_color='white')
     if event == '-link_instruction-':
         webbrowser.open("https://disk.yandex.ru/i/0UkkcWdY0UCSEw")
     if event == '-screener_start-':
