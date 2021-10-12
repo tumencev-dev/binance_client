@@ -708,7 +708,7 @@ contacts_tab = [
         sg.Button('sstumenss@gmail.com', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_semen_m-')
     ],
     [sg.VerticalSeparator(pad=(0,10))],
-    [sg.Text('Ваша Благодарность – Лучшая Мотивация!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
+    [sg.Text('Ваша благодарность – лучшая мотивация!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black', pad=(0,0))],
     [sg.HorizontalSeparator(color='black', pad=(80,(0,10)))],
     [sg.Button('https://yoomoney.ru/to/410013748961839', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-link_donat-')],
     [sg.Text('или', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
