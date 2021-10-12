@@ -630,7 +630,7 @@ volume_tab = [
     [sg.Text('', size=(67,4), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
     [
         sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2),
-        sg.Button('Удвоить x2', key='-double-', size=(15,1), disabled=True, button_color=bg_color_light, mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
+        sg.Button('Удвоить x2', key='-double-', size=(15,1), disabled=True, button_color=('black', bg_color_frame), mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
         sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
     ]
 ]
