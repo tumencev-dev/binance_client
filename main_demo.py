@@ -26,6 +26,8 @@ full_list, old_full_list, settings_rows_list = [], [], []
 settings_rows_dict = {}
 ticker_list = ['1INCHUSDT', 'AAVEUSDT', 'ADAUSDT', 'AKROUSDT', 'ALGOUSDT', 'ALICEUSDT', 'ALPHAUSDT', 'ANKRUSDT', 'ATAUSDT', 'ATOMUSDT', 'AUDIOUSDT', 'AVAXUSDT', 'AXSUSDT', 'BAKEUSDT', 'BALUSDT', 'BANDUSDT', 'BATUSDT', 'BCHUSDT', 'BELUSDT', 'BLZUSDT', 'BNBUSDT', 'BTCUSDT', 'BTCSTUSDT', 'BTSUSDT', 'BTTUSDT', 'BZRXUSDT', 'C98USDT', 'CELRUSDT', 'CHRUSDT', 'CHZUSDT', 'COMPUSDT', 'COTIUSDT', 'CRVUSDT', 'CTKUSDT', 'CVCUSDT', 'DASHUSDT', 'DENTUSDT', 'DGBUSDT', 'DODOUSDT', 'DOGEUSDT', 'DOTUSDT', 'DYDXUSDT', 'EGLDUSDT', 'ENJUSDT', 'EOSUSDT', 'ETCUSDT', 'ETHUSDT', 'FILUSDT', 'FLMUSDT', 'FTMUSDT', 'GALAUSDT', 'GRTUSDT', 'GTCUSDT', 'HBARUSDT', 'HNTUSDT', 'HOTUSDT', 'ICPUSDT', 'ICXUSDT', 'IOSTUSDT', 'IOTAUSDT', 'IOTXUSDT', 'KAVAUSDT', 'KEEPUSDT', 'KNCUSDT', 'KSMUSDT', 'LINAUSDT', 'LINKUSDT', 'LITUSDT', 'LRCUSDT', 'LTCUSDT', 'LUNAUSDT', 'MANAUSDT', 'MASKUSDT', 'MATICUSDT', 'MKRUSDT', 'MTLUSDT', 'NEARUSDT', 'NEOUSDT', 'NKNUSDT', 'OCEANUSDT', 'OGNUSDT', 'OMGUSDT', 'ONEUSDT', 'ONTUSDT', 'QTUMUSDT', 'RAYUSDT', 'REEFUSDT', 'RENUSDT', 'RLCUSDT', 'RSRUSDT', 'RUNEUSDT', 'RVNUSDT', 'SANDUSDT', 'SFPUSDT', 'SHIBUSDT', 'SKLUSDT', 'SNXUSDT', 'SOLUSDT', 'SRMUSDT', 'STMXUSDT', 'STORJUSDT', 'SUSHIUSDT', 'SXPUSDT', 'THETAUSDT', 'TLMUSDT', 'TOMOUSDT', 'TRBUSDT', 'TRXUSDT', 'UNFIUSDT', 'UNIUSDT', 'VETUSDT', 'WAVESUSDT', 'XEMUSDT', 'XLMUSDT', 'XMRUSDT', 'XRPUSDT', 'XTZUSDT', 'YFIUSDT', 'YFIIUSDT', 'ZECUSDT', 'ZENUSDT', 'ZILUSDT', 'ZRXUSDT']
 
+sg.theme('Default')
+
 # проверка ключей API и их подгрузка из файла
 homepath = os.getenv('USERPROFILE')
 file_path = os.path.normpath(homepath) + "\.BinanceClient\settings_binance.json"
@@ -522,7 +524,7 @@ orders_tab = [
         sg.Text('Укажите тикер монеты и нажмите Enter ', background_color=bg_color_frame, text_color='black', pad=((60,0),20)),
         sg.Input(size=(20,1), border_width=1, pad=((0,60),20), key='-ticker_orders-', enable_events=True)
     ],
-    [sg.Text('\nОРДЕРА ПО НАЛИЧИЮ ПЛОТНОСТИ НА ЦЕНОВОМ УРОВНЕ', size=(65,2), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('\nОРДЕРА ПО НАЛИЧИЮ ПЛОТНОСТИ НА ЦЕНОВОМ УРОВНЕ', size=(65,2), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Frame('', by_volume_layout_1, background_color=bg_color_frame, border_width=0),
@@ -534,7 +536,7 @@ orders_tab = [
         sg.Frame('', by_volume_layout_4, background_color=bg_color_frame, border_width=2, element_justification='center')
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('\nОРДЕРА ПО ДОСТИЖЕНИЮ ЦЕНОВОГО УРОВНЯ', size=(65,2), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('\nОРДЕРА ПО ДОСТИЖЕНИЮ ЦЕНОВОГО УРОВНЯ', size=(65,2), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Frame('', by_price_layout_1, background_color=bg_color_frame, border_width=0),
@@ -553,7 +555,7 @@ orders_tab = [
 screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
-                headings=['Тикер','Цена','Объём','Объём в $', 't, мин.', 'До уровня'],
+                headings=['Тикер','Цена','Объём','Объём в $', 'Время', 'До уровня'],
                 num_rows=37,
                 background_color=bg_color_light,
                 text_color='black',
@@ -588,7 +590,7 @@ volume_tab = [
         sg.Button('-submit-', visible=False, bind_return_key=True)
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('\nБОЛЬШИНСТВО МОНЕТ', size=(67,2), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('\n\n\nБОЛЬШИНСТВО МОНЕТ', size=(67,4), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
@@ -601,7 +603,7 @@ volume_tab = [
         sg.Button('Копировать', key='-copy2-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('МОНЕТЫ С ПОВЫШЕННОЙ ЛИКВИДНОСТЬЮ', size=(67,1), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('МОНЕТЫ С ПОВЫШЕННОЙ ЛИКВИДНОСТЬЮ', size=(67,1), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
@@ -614,7 +616,7 @@ volume_tab = [
         sg.Button('Копировать', key='-copy4-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('ТОПОВЫЕ МОНЕТЫ', size=(67,1), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('ТОПОВЫЕ МОНЕТЫ', size=(67,1), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
@@ -627,11 +629,11 @@ volume_tab = [
         sg.Button('Копировать', key='-copy6-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('', size=(67,4), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('', size=(67,2), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
     [
-        sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2),
-        sg.Button('Удвоить x2', key='-double-', size=(15,1), disabled=True, button_color=('black', bg_color_frame), mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
-        sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
+        sg.Text('', size=(24,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2),
+        sg.Button('Удвоить значения', key='-double-', size=(19,1), disabled=True, button_color=('white', bg_color), mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
+        sg.Text('', size=(24,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
     ]
 ]
 settings_tab = [
@@ -639,12 +641,12 @@ settings_tab = [
     [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(5,5)), default_text=g_api_key)],
     [sg.Text('Secret Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-SECRET_KEY_IN-'), sg.Input(key='-SECRET_KEY-', pad=((5,32),(5,5)), default_text=g_secret_key)],
     [
-        sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=(32,(5, 24)), key='-settings_info-'),
-        sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,25)))
+        sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=(32,(5, 10)), key='-settings_info-'),
+        sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,10)))
     ],
     [sg.HorizontalSeparator(color='black')],
     [sg.Text('', size=(68,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)],
-    [sg.Text('Настройка скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
     [
         sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
         sg.Combo(ticker_list, size=(11,1), key='-ticker_settings-'),
@@ -654,7 +656,7 @@ settings_tab = [
     ],
     [sg.Table(values=[],
                 headings=['Тикер', 'Объём КО в $'],
-                num_rows=22,
+                num_rows=23,
                 background_color=bg_color_light,
                 text_color='white',
                 auto_size_columns=False,
