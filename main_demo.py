@@ -73,6 +73,7 @@ def get_info(window):
         window['-copy4-'].update(disabled=True)
         window['-copy5-'].update(disabled=True)
         window['-copy6-'].update(disabled=True)
+        window['-double-'].update(disabled=True)
     else:
         try:
             if price_1 != '0.0000':
@@ -98,6 +99,7 @@ def get_info(window):
             window['-copy4-'].update(disabled=False)
             window['-copy5-'].update(disabled=False)
             window['-copy6-'].update(disabled=False)
+            window['-double-'].update(disabled=False)
         except:
             window['-info-'].update("Ошибка в рассчетах! Повторите ввод")
             window['-copy1-'].update(disabled=True)
@@ -106,6 +108,7 @@ def get_info(window):
             window['-copy4-'].update(disabled=True)
             window['-copy5-'].update(disabled=True)
             window['-copy6-'].update(disabled=True)
+            window['-double-'].update(disabled=True)
 
 def convert(value, param):
     if value >= 1_000_000:
@@ -627,7 +630,7 @@ volume_tab = [
     [sg.Text('', size=(67,4), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
     [
         sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2),
-        sg.Button('Удвоить x2', key='-double-', size=(15,1), button_color=bg_color_light, mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
+        sg.Button('Удвоить x2', key='-double-', size=(15,1), disabled=True, button_color=bg_color_light, mouseover_colors=bg_color_light, border_width=0, pad=(0,0)),
         sg.Text('', size=(26,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
     ]
 ]
@@ -956,4 +959,11 @@ while True:
             json.dump(new_data, f, ensure_ascii=False, indent=4)
         settings_rows_list.remove(settings_rows_list[values['-settings_table-'][0]])
         window['-settings_table-'].update(values=settings_rows_list)
+    if event == '-double-':
+        window['-big_volume_1-'].update(str(float(values['-big_volume_1-'].replace(',', '.')) * 2).replace('.', ','))
+        window['-big_volume_2-'].update(str(float(values['-big_volume_2-'].replace(',', '.')) * 2).replace('.', ','))
+        window['-big_volume_3-'].update(str(float(values['-big_volume_3-'].replace(',', '.')) * 2).replace('.', ','))
+        window['-big_volume_4-'].update(str(float(values['-big_volume_4-'].replace(',', '.')) * 2).replace('.', ','))
+        window['-big_volume_5-'].update(str(float(values['-big_volume_5-'].replace(',', '.')) * 2).replace('.', ','))
+        window['-big_volume_6-'].update(str(float(values['-big_volume_6-'].replace(',', '.')) * 2).replace('.', ','))
 window.close()
