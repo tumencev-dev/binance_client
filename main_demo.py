@@ -665,7 +665,7 @@ settings_tab = [
                 pad=(5,(12,4),),
                 key='-settings_table-')
     ],
-    [sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((330,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
+    [sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((330,0),(10,9)), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
 ]
 instruction_tab = [
@@ -715,7 +715,7 @@ contacts_tab = [
     [sg.Button('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf', font=('Arial',10), button_color=('#2b5279',bg_color_frame), border_width=0, key='-copy_keep-')],
     [sg.Text('Tether (USDT): Сеть: TRX Tron (TRC20)', font=('Arial', 10), background_color=bg_color_frame, text_color='black')],
     [sg.Text('Увидимся в стакане, коллеги!', font=('Arial',10, 'bold italic'), background_color=bg_color_frame, text_color='black')],
-    [sg.HorizontalSeparator(color='black', pad=(0,(58,2)))]
+    [sg.HorizontalSeparator(color='black', pad=(0,(61,2)))]
 ]
 
 layout = [
