@@ -16,6 +16,8 @@
 # https://0.30000000000000004.com/
 
 import PySimpleGUI as sg
+from playsound import playsound
+import threading
 import pyglet
 
 def play_audio(file):
@@ -31,6 +33,9 @@ def play_audio(file):
 
         pyglet.app.run()
 
+def play_sound(file):
+    playsound(file)
+
 layout = [  [sg.Text('Путь к файлу:')],
             [sg.InputText(key='-IN-'), sg.FilesBrowse('Открыть')],
             [sg.Button('Play'), sg.Button('Cancel')] ]
@@ -42,5 +47,6 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
     if event == 'Play':
-        play_audio(values['-IN-'])
+        threading.Thread(target=playsound, args=(values['-IN-'], ), daemon=True).start()
+        #playsound(values['-IN-'])
 window.close()

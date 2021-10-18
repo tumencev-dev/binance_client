@@ -10,6 +10,7 @@ import requests
 import webbrowser
 import ntplib
 import json
+from playsound import playsound
 from time import sleep
 from datetime import datetime
 
@@ -130,6 +131,7 @@ def convert(value, param):
     return value
 
 def screener_active(ticker, dict_data, dict_row, key):
+    sound_alert_file = ''
     for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
@@ -159,6 +161,7 @@ def screener_active(ticker, dict_data, dict_row, key):
     for i in range(0, len(settings_rows_list)):
         if ticker == settings_rows_list[i][0]:
             depth_volume = float(settings_rows_list[i][1])
+            sound_alert_file = settings_rows_list[i][2]
     response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
     data = json.loads(response.text)
     l_bids = data['bids']
@@ -188,6 +191,8 @@ def screener_active(ticker, dict_data, dict_row, key):
             else:
                 temp_list_row.append([row_number, "pink"])
                 row_number += 1
+            if sound_alert_file != '':
+                threading.Thread(target=play_sound, args=(sound_alert_file, ), daemon=True).start()
         temp_list_depth = []
     dict_data[key] = temp_list_depth_full
     dict_row[key] = temp_list_row
@@ -282,6 +287,10 @@ def copy(text):
     r.clipboard_append(text)
     r.update()
     r.destroy()
+
+def play_sound(file):
+    if os.path.exists(file) == True:
+        playsound(file)
 
 def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_long, set_short, set_start, set_stop, set_info):
     if g_api_key == "" and g_secret_key == "":
@@ -636,6 +645,16 @@ volume_tab = [
         sg.Text('', size=(24,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
     ]
 ]
+
+sound_alert_frame = [
+    [sg.Checkbox('Включить звуковое оповещение об объёме', enable_events=True, key='-sound_alert_checkbox-', pad=((20,5),(15,5)))],
+    [
+        sg.Input(disabled=True, key='-sound_alert_input-', pad=((20,5), 5)),
+        sg.FileBrowse('Обзор', size=(12,1), button_color=bg_color, disabled=True, key='-sound_alert_btn_brw-', pad=((5,20), 5))
+    ],
+    [sg.Button('Проверить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True, key='-sound_alert_test-', pad=((20,5),(5,15)))]
+]
+
 settings_tab = [
     [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
     [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(5,5)), default_text=g_api_key)],
@@ -653,24 +672,20 @@ settings_tab = [
         sg.Text('Объём в $:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
         sg.Input(size=(22,1), key='-volume_settings-')
     ],
-    [sg.Checkbox('Включить звуковое оповещение об объёме', enable_events=True, key='-sound_alert_checkbox-')],
-    [
-        sg.Input(disabled=True, key='-sound_alert_input-'),
-        sg.FileBrowse('Обзор', size=(12,1), button_color=bg_color, disabled=True, key='-sound_alert_btn_brw-')
-    ],
-    [sg.Button('Добавить', key='-add_row_table-', size=(12,1), pad=((330,0),(10,9)), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
+    [sg.Frame('', sound_alert_frame, pad=(0,(10,0)))],
+    [sg.Button('Добавить', key='-add_row_table-', size=(12,1), pad=((330,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
     [sg.Table(values=[],
                 headings=['Тикер', 'Объём КО в $', 'Оповещение'],
-                num_rows=15,
+                num_rows=12,
                 background_color=bg_color_light,
                 text_color='white',
                 auto_size_columns=False,
                 col_widths=[14, 18, 34],
                 justification='left',
-                pad=(5,(12,4),),
+                pad=(5,0),
                 key='-settings_table-')
     ],
-    [sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((330,0),(10,9)), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
+    [sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((330,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
 ]
 instruction_tab = [
@@ -736,7 +751,7 @@ layout = [
 ]
 
 time = ntplib.NTPClient()
-time_response = time.request('1.pool.ntp.org')
+time_response = time.request('0.pool.ntp.org')
 
 window = sg.Window('BinTrade ver.5.9 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
@@ -986,7 +1001,11 @@ while True:
         if window['-sound_alert_checkbox-'].get() == True:
             window['-sound_alert_input-'].update(disabled=False)
             window['-sound_alert_btn_brw-'].update(disabled=False)
+            window['-sound_alert_test-'].update(disabled=False)
         else:
             window['-sound_alert_input-'].update(disabled=True)
             window['-sound_alert_btn_brw-'].update(disabled=True)
+            window['-sound_alert_test-'].update(disabled=True)
+    if event == '-sound_alert_test-':
+        threading.Thread(target=play_sound, args=(values['-sound_alert_input-'], ), daemon=True).start()
 window.close()
