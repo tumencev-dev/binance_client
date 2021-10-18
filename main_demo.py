@@ -4,15 +4,13 @@ from binance_f import RequestClient
 from binance_f.constant.test import *
 from binance_f.base.printobject import *
 from binance_f.model.constant import *
+from playsound import playsound
 from os import path, getenv
 import threading
 import requests
 import webbrowser
 import ntplib
 import json
-from playsound import playsound
-from time import sleep
-from datetime import datetime
 
 # константы
 icon = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDoAABSCAABFVgAADqXAAAXb9daH5AAAARzSURBVHjafJZLbJRVFMd/9850hvZ7a0ot6SMUSgIkirjDZwgxsTXGqLRVSFiARl6yAFMXSnRpXGjQhQFEIvXRNgqYNhG3uDIKJvKIrDSxNCUBxk4H2pn5vr+LmfJoOz3Jzfe6Of9zzu9+91xTH4ZYGSQeNrAdeAp4AKgDRMUMYIytPCipXOZ8LwE3EL9IHAPOW4SpD0NSMq9IDABZaphNGfK5GAAvTJHEoqYZSorZZtG3pj4IH7Ey56tR1HBuyeeKuJlKClPFBC/MkMTJYiJYab21MrsWc55KWwpTRVCZMyOrODOyClSmMDVDKm1rCwiE2WuBJxYry2RuhqRU5vQ3nWzY5LBhk8PprztJSjGTuRlsyiym8bgF/Jo1v1mCRAyeWMELrwZwIQ8X8rzwWsDgVysgEfmbJWyqZiaeBez8shjyuTIQMzjQTs8Wj/hiAUILoSG5VKBnq8fgQDuQkM8VSaUXzMTOFzAwXYjpaLaMDrTTs9mFv26T6rT07fyXvp1j2JUWrtymZ7PL6Ik2Opot04V4IZKy9wI2xlDIJxRnyjzX5dO1xYexaWg1HNg3weDIdQZHrnNg3wS0GhibpmurR/fzIcWZMoV8gjEGc6+Q40fjjh/JjyLZTCgIBL4c19Pxj5dL0+vVv69VsETgV8cS9b/VJk2v14lDy+V6s+8DmbpQXhTJ8SM5fjSO40fjXhTJpn2Bp9HvO/XBO22CBjlZX90bmwSewNEPRzt08osOgSPw1L2xSW7WFzToYH+bfjrdKYsvm/blhVUBN4jGbTpUYxDq11PLpfIaaXq1Pn2vtRqVK0ugocPtktZKWqvhI+2yBAJX4OvQu63S9GqpvEa//dihpWEomw7lBtF4+j4iSkAlkEGoisfeXdWUqqxmt4lZhALFIBHHMYkMzM65W6JK7UeH2/R+f7PAVUMmVNfTjVUurk4ebtHJoy3VyAN1P9MoJxsKXB18u1kjw20CXzYdzHIYx/GjqwtDDnXsw2bpVof69zTdA7gy+nc3Sbc6dPyjh+S44R3INhPKnwN5rPogN4hEqiKya9tSSa3SpRbpWov272i843z/jkbpWot0sUVSm/ZuX1oJLBXKDe44l+NH46lMtn4/4M1yyGQNBsPE1YROL6HzUcE/4tmXU1z+E9auTHHkszr4O4FlMT8PlvjkSJlC0bCkwdztEBWbMo4fjQHL7t8qYDInSOC7z9P0vgTFK5AOKsBL/4nsKhg+JXreKIMBPzTE8bw/eSINzNvU4zJ4gSF/E/rejKFs6N0M8eUEBNk1YmjY0Lu7stK8kIWcAyRpDJMs0JySGLwI8pPQt0dkjXixVyA4NWTo3Q2kwPMrc2s0nUnj+tFhweu1Gw5MTUFShLNDFU9P9qSwGXDdSra1OhriS+P54boEc27xlgn5nMGpq6RaKBm8UItFDoKkrMcs8Icx9AmKtQSSGLxAFGIoVO9rOq9iNGIL4pzx/BAZQ4LWIbPdVI4tDwJp5iy6OceWuTGXgRvAWYOOIfN7XBb/DwA31yPOSnmqQwAAAABJRU5ErkJggg=='
@@ -310,18 +308,13 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
                 window[set_qty].update(disabled=True)
                 window[set_quantity].update(disabled=True)
                 while True:
-                    #start_time = datetime.now() Закоментированные строки делались для проверки скорости выполнения
                     current_depth = get_depth(ticker, price)
-                    #go_dept_time = datetime.now() - start_time
-                    #print('Time get volume: ', go_dept_time)
-                    #start_time  = datetime.now()
                     if float(current_depth) < qty:
                         request_client = RequestClient(api_key=g_api_key, secret_key=g_secret_key)
                         if values[set_long] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.BUY, quantity=quantity, ordertype=OrderType.MARKET)
                         if values[set_short] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.SELL, quantity=quantity, ordertype=OrderType.MARKET)
-                        #print('Time close orders: ', (datetime.now() - start_time))
                         window[set_info].Update("Код выполнен. Ордера закрыты...")
                         window[set_stop].update(visible=False)
                         window[set_start].update(visible=True)
