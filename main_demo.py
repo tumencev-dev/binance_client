@@ -6,6 +6,7 @@ from binance_f.base.printobject import *
 from binance_f.model.constant import *
 from playsound import playsound
 from os import path, getenv
+from time import sleep
 import threading
 import requests
 import webbrowser
@@ -191,6 +192,7 @@ def screener_active(ticker, dict_data, dict_row, key):
                 row_number += 1
             if sound_alert_file != '':
                 threading.Thread(target=play_sound, args=(sound_alert_file, ), daemon=True).start()
+                sound_alert_file = ''
         temp_list_depth = []
     dict_data[key] = temp_list_depth_full
     dict_row[key] = temp_list_row
