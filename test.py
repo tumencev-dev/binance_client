@@ -16,7 +16,6 @@
 # https://0.30000000000000004.com/
 
 import PySimpleGUI as sg
-from PySimpleGUI.PySimpleGUI import BUTTON_TYPE_BROWSE_FILE, Open
 import pyglet
 
 def play_audio(file):
@@ -43,5 +42,5 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
     if event == 'Play':
-        play_audio(str(values['-IN-']))
+        play_audio(values['-IN-'])
 window.close()

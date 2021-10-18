@@ -41,7 +41,7 @@ if os.path.exists(folder_path) == True:
             settings_rows_dict = data['tickers']
             if settings_rows_dict != {}:
                 for key, value in settings_rows_dict.items():
-                    settings_rows_list.append([key, value])
+                    settings_rows_list.append([key, value[0], value[1]])
 else:
     os.mkdir(folder_path)
 
@@ -645,22 +645,27 @@ settings_tab = [
         sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,10)))
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('', size=(68,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)],
+    [sg.Text('', size=(69,1), pad=(0,0), background_color=bg_color, justification='center')],
     [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
     [
         sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
-        sg.Combo(ticker_list, size=(11,1), key='-ticker_settings-'),
+        sg.Combo(ticker_list, size=(15,1), key='-ticker_settings-'),
         sg.Text('Объём в $:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
-        sg.Input(size=(11,1), key='-volume_settings-'),
-        sg.Button('Добавить', key='-add_row_table-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)
+        sg.Input(size=(22,1), key='-volume_settings-')
     ],
+    [sg.Checkbox('Включить звуковое оповещение об объёме', enable_events=True, key='-sound_alert_checkbox-')],
+    [
+        sg.Input(disabled=True, key='-sound_alert_input-'),
+        sg.FileBrowse('Обзор', size=(12,1), button_color=bg_color, disabled=True, key='-sound_alert_btn_brw-')
+    ],
+    [sg.Button('Добавить', key='-add_row_table-', size=(12,1), pad=((330,0),(10,9)), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
     [sg.Table(values=[],
-                headings=['Тикер', 'Объём КО в $'],
-                num_rows=23,
+                headings=['Тикер', 'Объём КО в $', 'Оповещение'],
+                num_rows=15,
                 background_color=bg_color_light,
                 text_color='white',
                 auto_size_columns=False,
-                col_widths=[33, 33],
+                col_widths=[14, 18, 34],
                 justification='left',
                 pad=(5,(12,4),),
                 key='-settings_table-')
@@ -731,7 +736,7 @@ layout = [
 ]
 
 time = ntplib.NTPClient()
-time_response = time.request('0.pool.ntp.org')
+time_response = time.request('1.pool.ntp.org')
 
 window = sg.Window('BinTrade ver.5.9 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
@@ -905,6 +910,10 @@ while True:
     if event == '-add_row_table-':
         ticker_settings = values['-ticker_settings-']
         volume_settings = values['-volume_settings-']
+        if window['-sound_alert_checkbox-'].get() == True:
+            sound_alert_settings = values['-sound_alert_input-']
+        else:
+            sound_alert_settings = ''
         if os.path.exists(file_path) == True:
             if ticker_settings != '' and volume_settings != '':
                 with open(file_path, 'r') as json_file:
@@ -918,19 +927,24 @@ while True:
                     }
                     if 'tickers' in old_data:
                         new_data['tickers'] = old_data['tickers']
-                        new_data['tickers'][ticker_settings] = volume_settings
+                        new_data['tickers'][ticker_settings] = []
+                        new_data['tickers'][ticker_settings].append(volume_settings)
+                        new_data['tickers'][ticker_settings].append(sound_alert_settings)
                     else:
                         new_data['tickers'] = {}
-                        new_data['tickers'][ticker_settings] = volume_settings
+                        new_data['tickers'][ticker_settings] = []
+                        new_data['tickers'][ticker_settings].append(volume_settings)
+                        new_data['tickers'][ticker_settings].append(sound_alert_settings)
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(new_data, f, ensure_ascii=False, indent=4)
                 temp_variable = 0
                 for list in settings_rows_list:
                     if list[0] == ticker_settings:
                         list[1] = volume_settings
+                        list[2] = sound_alert_settings
                         temp_variable = 1
                 if temp_variable == 0:
-                    settings_rows_list.append([ticker_settings, volume_settings])
+                    settings_rows_list.append([ticker_settings, volume_settings, sound_alert_settings])
                     window['-settings_table-'].update(values=settings_rows_list)
                 else:
                     window['-settings_table-'].update(values=settings_rows_list)
@@ -968,4 +982,11 @@ while True:
         window['-big_volume_4-'].update(str(float(values['-big_volume_4-'].replace(',', '.')) * 2).replace('.', ','))
         window['-big_volume_5-'].update(str(float(values['-big_volume_5-'].replace(',', '.')) * 2).replace('.', ','))
         window['-big_volume_6-'].update(str(float(values['-big_volume_6-'].replace(',', '.')) * 2).replace('.', ','))
+    if event == '-sound_alert_checkbox-':
+        if window['-sound_alert_checkbox-'].get() == True:
+            window['-sound_alert_input-'].update(disabled=False)
+            window['-sound_alert_btn_brw-'].update(disabled=False)
+        else:
+            window['-sound_alert_input-'].update(disabled=True)
+            window['-sound_alert_btn_brw-'].update(disabled=True)
 window.close()
