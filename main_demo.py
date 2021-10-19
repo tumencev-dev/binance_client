@@ -962,7 +962,9 @@ while True:
             new_data = {}
             new_data['settings'] = {}
             new_data['tickers'] = {}
-            new_data['tickers'][ticker_settings] = volume_settings
+            new_data['tickers'][ticker_settings] = []
+            new_data['tickers'][ticker_settings].append(volume_settings)
+            new_data['tickers'][ticker_settings].append(sound_alert_settings)
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
             settings_rows_list.append([ticker_settings, volume_settings])
