@@ -47,6 +47,6 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
     if event == 'Play':
-        threading.Thread(target=playsound, args=(values['-IN-'], ), daemon=True).start()
+        threading.Thread(target=play_sound, args=(values['-IN-'], ), daemon=True).start()
         #playsound(values['-IN-'])
 window.close()

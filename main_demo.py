@@ -129,6 +129,10 @@ def convert(value, param):
         value = '{:.0f}'.format(value)
     return value
 
+def play_sound(file):
+    if os.path.exists(file) == True:
+        playsound(file)
+
 def screener_active(ticker, dict_data, dict_row, key):
     sound_alert_file = ''
     for i in range(1,5):
@@ -287,10 +291,6 @@ def copy(text):
     r.clipboard_append(text)
     r.update()
     r.destroy()
-
-def play_sound(file):
-    if os.path.exists(file) == True:
-        playsound(file)
 
 def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_long, set_short, set_start, set_stop, set_info):
     if g_api_key == "" and g_secret_key == "":
