@@ -967,7 +967,7 @@ while True:
             new_data['tickers'][ticker_settings].append(sound_alert_settings)
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
-            settings_rows_list.append([ticker_settings, volume_settings])
+            settings_rows_list.append([ticker_settings, volume_settings, sound_alert_settings])
             window['-settings_table-'].update(values=settings_rows_list)
     if event == '-del_row_table-':
         if values['-settings_table-'] != []:
