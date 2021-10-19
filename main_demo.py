@@ -968,23 +968,24 @@ while True:
             settings_rows_list.append([ticker_settings, volume_settings])
             window['-settings_table-'].update(values=settings_rows_list)
     if event == '-del_row_table-':
-        del_ticker = settings_rows_list[values['-settings_table-'][0]][0]
-        with open(file_path, 'r') as json_file:
-            old_data = json.load(json_file)
-        if 'settings' in old_data:
-            new_data = {
-                'settings': {
-                    'api_key': g_api_key,
-                    'secret_key': g_secret_key,
+        if values['-settings_table-'] != []:
+            del_ticker = settings_rows_list[values['-settings_table-'][0]][0]
+            with open(file_path, 'r') as json_file:
+                old_data = json.load(json_file)
+            if 'settings' in old_data:
+                new_data = {
+                    'settings': {
+                        'api_key': g_api_key,
+                        'secret_key': g_secret_key,
+                    }
                 }
-            }
-            if del_ticker in old_data['tickers']:
-                old_data['tickers'].pop(del_ticker, 0)
-                new_data['tickers'] = old_data['tickers']
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(new_data, f, ensure_ascii=False, indent=4)
-        settings_rows_list.remove(settings_rows_list[values['-settings_table-'][0]])
-        window['-settings_table-'].update(values=settings_rows_list)
+                if del_ticker in old_data['tickers']:
+                    old_data['tickers'].pop(del_ticker, 0)
+                    new_data['tickers'] = old_data['tickers']
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(new_data, f, ensure_ascii=False, indent=4)
+            settings_rows_list.remove(settings_rows_list[values['-settings_table-'][0]])
+            window['-settings_table-'].update(values=settings_rows_list)
     if event == '-double-':
         window['-big_volume_1-'].update(str(float(values['-big_volume_1-'].replace(',', '.')) * 2).replace('.', ','))
         window['-big_volume_2-'].update(str(float(values['-big_volume_2-'].replace(',', '.')) * 2).replace('.', ','))
