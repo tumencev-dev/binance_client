@@ -195,8 +195,10 @@ def screener_active(ticker, dict_data, dict_row, key):
                 temp_list_row.append([row_number, "pink"])
                 row_number += 1
             if sound_alert_file != '':
-                threading.Thread(target=play_sound, args=(sound_alert_file, ), daemon=True).start()
+                alert_thread = threading.Thread(target=play_sound, args=(sound_alert_file, ), daemon=True).start()
+                #alert_thread.start()
                 sound_alert_file = ''
+                #alert_thread.join()
         temp_list_depth = []
     dict_data[key] = temp_list_depth_full
     dict_row[key] = temp_list_row
