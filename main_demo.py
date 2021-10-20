@@ -891,7 +891,7 @@ while True:
             if 'tickers' in old_data:
                 tickers_dict = {}
                 for list in settings_rows_list:
-                    tickers_dict[list[0]] = list[1]
+                    tickers_dict[list[0]] = [list[1], list[2]]
             new_data = {
                 'settings': {},
                 'tickers': tickers_dict
