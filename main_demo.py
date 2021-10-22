@@ -136,7 +136,6 @@ def play_alert_sound(alert_screener_list, full_list):
                 if alert_list[0] == current_element[0] and current_element[4] == '' and (alert_list[0] not in alert_active):
                     if os.path.exists(alert_list[1]) == True:
                         playsound(alert_list[1])
-                        print('[] signal ' + alert_list[0])
                         alert_active.append(alert_list[0])
 
 def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
