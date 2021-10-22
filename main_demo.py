@@ -195,7 +195,7 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
                 temp_list_row.append([row_number, "pink"])
                 row_number += 1
             if sound_alert_file != '':
-                alert_screener_list.append([ticker.replace('USDT', ''), '{:.4f}'.format(float(depth[0])), sound_alert_file])
+                alert_screener_list.append([ticker.replace('USDT', ''), sound_alert_file])
                 sound_alert_file = ''
         temp_list_depth = []
     dict_data[key] = temp_list_depth_full
@@ -260,18 +260,19 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
                                 else:
                                     full_list[-1][4] = old_element[4] + timeout
             if old_full_list != []:
-                for old_element in old_full_list:
-                    for alert_list in alert_screener_list:
-                        if alert_list[0] == old_element[0] and alert_list[1] == old_element[1]:
-                            #threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
-                            if alert_list[2] != '':
-                                print('signal ' + alert_list[0])
-                            
-            else:
                 for alert_list in alert_screener_list:
-                    if alert_list[2] != '':
-                        #threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
-                        print('signal ' + alert_list[0])
+                    for current_element in full_list:
+                        if alert_list[0] == current_element[0] and current_element[4] == '':
+                            threading.Thread(target=play_sound, args=(alert_list[1], ), daemon=True).start()
+                            print('[] signal ' + alert_list[0])
+            else:
+                alert_active = []
+                for alert_list in alert_screener_list:
+                    if alert_list[1] != '' and alert_list[0] not in alert_active:
+                        threading.Thread(target=play_sound, args=(alert_list[1], ), daemon=True).start()
+                        print('[not] signal ' + alert_list[0])
+                        alert_active.append(alert_list[0])
+
             timeout = 1
             window['-screener_stop-'].update(button_color=('white', bg_color_light))
         except Exception as ex:
@@ -763,7 +764,7 @@ layout = [
 time = ntplib.NTPClient()
 time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('BinTrade ver.5.9 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('BinTrade ver.5.9.3 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
