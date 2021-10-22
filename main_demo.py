@@ -133,7 +133,7 @@ def play_sound(file):
     if os.path.exists(file) == True:
         playsound(file)
 
-def screener_active(ticker, dict_data, dict_row, key):
+def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     sound_alert_file = ''
     for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
@@ -195,7 +195,7 @@ def screener_active(ticker, dict_data, dict_row, key):
                 temp_list_row.append([row_number, "pink"])
                 row_number += 1
             if sound_alert_file != '':
-                threading.Thread(target=play_sound, args=(sound_alert_file, ), daemon=True).start()
+                alert_screener_list.append([ticker.replace('USDT', ''), '{:.4f}'.format(float(depth[0])), sound_alert_file])
                 sound_alert_file = ''
         temp_list_depth = []
     dict_data[key] = temp_list_depth_full
@@ -213,6 +213,7 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
         row_list = []
         temp_dict_depth = {}
         temp_dict_row = {}
+        alert_screener_list = []
         thread = []
         for ticker in symbol:
             br = 0
@@ -225,6 +226,7 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
                 ticker,
                 temp_dict_depth,
                 temp_dict_row,
+                alert_screener_list,
                 symbol.index(ticker)
                 ), daemon=True)
             thread.append(tr)
@@ -257,6 +259,16 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
                                     full_list[-1][4] = timeout
                                 else:
                                     full_list[-1][4] = old_element[4] + timeout
+            if old_full_list != []:
+                for old_element in old_full_list:
+                    for alert_list in alert_screener_list:
+                        if alert_list[0] == old_element[0] and alert_list[1] == old_element[1]:
+                            threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
+                            
+            else:
+                for alert_list in alert_screener_list:
+                    if alert_list[2] != '':
+                        threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
             timeout = 1
             window['-screener_stop-'].update(button_color=('white', bg_color_light))
         except Exception as ex:
