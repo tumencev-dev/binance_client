@@ -17,6 +17,7 @@
 
 import PySimpleGUI as sg
 from playsound import playsound
+from time import sleep
 import threading
 import pyglet
 
@@ -47,6 +48,8 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
     if event == 'Play':
+        threading.Thread(target=play_sound, args=(values['-IN-'], ), daemon=True).start()
+        sleep(1)
         threading.Thread(target=play_sound, args=(values['-IN-'], ), daemon=True).start()
         #playsound(values['-IN-'])
 window.close()

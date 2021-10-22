@@ -129,9 +129,15 @@ def convert(value, param):
         value = '{:.0f}'.format(value)
     return value
 
-def play_sound(file):
-    if os.path.exists(file) == True:
-        playsound(file)
+def play_alert_sound(alert_screener_list, full_list):
+        alert_active = []
+        for alert_list in alert_screener_list:
+            for current_element in full_list:
+                if alert_list[0] == current_element[0] and current_element[4] == '' and (alert_list[0] not in alert_active):
+                    if os.path.exists(alert_list[1]) == True:
+                        playsound(alert_list[1])
+                        print('[] signal ' + alert_list[0])
+                        alert_active.append(alert_list[0])
 
 def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     sound_alert_file = ''
@@ -259,20 +265,7 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
                                     full_list[-1][4] = timeout
                                 else:
                                     full_list[-1][4] = old_element[4] + timeout
-            if old_full_list != []:
-                for alert_list in alert_screener_list:
-                    for current_element in full_list:
-                        if alert_list[0] == current_element[0] and current_element[4] == '':
-                            threading.Thread(target=play_sound, args=(alert_list[1], ), daemon=True).start()
-                            print('[] signal ' + alert_list[0])
-            else:
-                alert_active = []
-                for alert_list in alert_screener_list:
-                    if alert_list[1] != '' and alert_list[0] not in alert_active:
-                        threading.Thread(target=play_sound, args=(alert_list[1], ), daemon=True).start()
-                        print('[not] signal ' + alert_list[0])
-                        alert_active.append(alert_list[0])
-
+            threading.Thread(target=play_alert_sound, args=(alert_screener_list, full_list), daemon=True).start()
             timeout = 1
             window['-screener_stop-'].update(button_color=('white', bg_color_light))
         except Exception as ex:
