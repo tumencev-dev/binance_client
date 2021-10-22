@@ -263,12 +263,15 @@ def get_depth_for_screener(symbol, full_list, old_full_list):
                 for old_element in old_full_list:
                     for alert_list in alert_screener_list:
                         if alert_list[0] == old_element[0] and alert_list[1] == old_element[1]:
-                            threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
+                            #threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
+                            if alert_list[2] != '':
+                                print('signal ' + alert_list[0])
                             
             else:
                 for alert_list in alert_screener_list:
                     if alert_list[2] != '':
-                        threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
+                        #threading.Thread(target=play_sound, args=(alert_list[2], ), daemon=True).start()
+                        print('signal ' + alert_list[0])
             timeout = 1
             window['-screener_stop-'].update(button_color=('white', bg_color_light))
         except Exception as ex:
