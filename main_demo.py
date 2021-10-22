@@ -1013,5 +1013,5 @@ while True:
             window['-sound_alert_btn_brw-'].update(disabled=True)
             window['-sound_alert_test-'].update(disabled=True)
     if event == '-sound_alert_test-':
-        threading.Thread(target=play_sound, args=(values['-sound_alert_input-'], ), daemon=True).start()
+        threading.Thread(target=playsound, args=(values['-sound_alert_input-'], ), daemon=True).start()
 window.close()
