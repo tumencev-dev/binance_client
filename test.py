@@ -1,52 +1,55 @@
-# import asyncio
+# def sentence_has_animal(sentence: str) -> bool:
+#     return "animal" in sentence
 
-# async def tcp_echo_client(message):
-#     reader, writer = await asyncio.open_connection(
-#         'wss://stream.binance.com/', 9443)
+# print(sentence_has_animal('У Ивана есть своя собственная ферма с animals'))
+# print(u'У Ивана есть своя собственная ферма с animals')
 
-#     print(f'Send: {message!r}')
-#     writer.write(message.encode())
-#     await writer.drain()
+# import math
 
-#     data = await reader.read(100)
-#     print(f'Received: {data.decode()!r}')
+# flat = [
+#     5.55, 22.19, 7.78, 26.86, 5.55,
+#     29.84, 22.19, 5.55, 16.85, 4.52
+# ]
 
-#     print('Close the connection')
-#     writer.close()
-#     await writer.wait_closed()
+# sum_area = math.fsum(flat)
+# print(sum_area)
+# https://0.30000000000000004.com/
 
-# asyncio.run(tcp_echo_client('btcusdt@depth'))
+import PySimpleGUI as sg
+from playsound import playsound
+from time import sleep
+import threading
+import pyglet
 
-# def convert(value):
-#     if value >= 1_000_000:
-#         value = '{:.1f}'.format(value / 1_000_000) + ' M'
-#     elif value >= 1000:
-#         value = '{:.1f}'.format(value / 1000) + ' K'
-#     return value
+def play_audio(file):
+    if file != '':
+        player = pyglet.media.Player()
+        sound = pyglet.media.load(file)
+        player.queue(sound)
+        player.play()
 
-# print(convert(123456123))
-# print(convert(123152))
+        @player.event
+        def on_eos():
+            pyglet.app.exit()
 
-# import PySimpleGUI as sg
+        pyglet.app.run()
 
-# # layout the window
-# layout = [[sg.Text('A custom progress meter')],
-#           [sg.ProgressBar(100, orientation='h', size=(50, 8), key='progressbar')],
-#           [sg.Cancel()]]
+def play_sound(file):
+    playsound(file)
 
-# # create the window`
-# window = sg.Window('Custom Progress Meter', layout)
-# progress_bar = window['progressbar']
-# # loop that would normally do something useful
-# for i in range(1000):
-#     # check to see if the cancel button was clicked and exit loop if clicked
-#     event, values = window.read(timeout=10)
-#     if event == 'Cancel'  or event == sg.WIN_CLOSED:
-#         break
-#   # update bar with loop value +1 so that bar eventually reaches the maximum
-#     progress_bar.UpdateBar(i + 1)
-# # done with loop... need to destroy the window as it's still open
-# window.close()
+layout = [  [sg.Text('Путь к файлу:')],
+            [sg.InputText(key='-IN-'), sg.FilesBrowse('Открыть')],
+            [sg.Button('Play'), sg.Button('Cancel')] ]
 
-# ticker_list = ['BANDUSDT', 'COMPUSDT', 'ENJUSDT', 'MATICUSDT', 'ADAUSDT', 'DOTUSDT', 'XRPUSDT', 'ETHUSDT', 'BNBUSDT', 'DOTUSDT', 'SUSHIUSDT', 'SOLUSDT', 'BCHUSDT', 'EOSUSDT', 'ALGOUSDT', 'ATOMUSDT', 'EGLDUSDT', 'KSMUSDT', 'LUNAUSDT', 'LINAUSDT', 'AXSUSDT', 'ICPUSDT', 'ALICEUSDT', 'LINKUSDT', 'RUNEUSDT', 'UNIUSDT', 'CHZUSDT', 'FILUSDT', 'NEOUSDT', 'IOTAUSDT', 'MKRUSDT', 'ZILUSDT']
-# print(len(ticker_list))
+window = sg.Window('Window Title', layout)
+
+while True:
+    event, values = window.read()
+    if event == sg.WIN_CLOSED or event == 'Cancel':
+        break
+    if event == 'Play':
+        threading.Thread(target=play_sound, args=(values['-IN-'], ), daemon=True).start()
+        sleep(1)
+        threading.Thread(target=play_sound, args=(values['-IN-'], ), daemon=True).start()
+        #playsound(values['-IN-'])
+window.close()
