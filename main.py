@@ -309,7 +309,7 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
             window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         else:
             try:
-                price = values[set_price].replace(',', '.')
+                price = '{:.4f}'.format(float(values[set_price].replace(',', '.'))).replace(",", ".")
                 qty = float(values[set_qty].replace(',', '.'))
                 quantity = values[set_quantity].replace(',', '.')
                 window[set_start].update(visible=False)
@@ -341,7 +341,8 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
                         window[set_qty].update(disabled=False)
                         window[set_quantity].update(disabled=False)
                         break
-            except:
+            except Exception as ex:
+                print(ex)
                 window[set_info].Update("Binance вернул ошибку!")
                 window[set_stop].update(visible=False)
                 window[set_start].update(visible=True)
