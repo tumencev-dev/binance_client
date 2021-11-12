@@ -309,7 +309,7 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
             window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         else:
             try:
-                price = '{:.4f}'.format(float(values[set_price].replace(',', '.'))).replace(",", ".")
+                price = '{:.4f}'.format(float(values[set_price].replace(',', '.')))
                 qty = float(values[set_qty].replace(',', '.'))
                 quantity = values[set_quantity].replace(',', '.')
                 window[set_start].update(visible=False)
@@ -323,9 +323,10 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
                         request_client = RequestClient(api_key=g_api_key, secret_key=g_secret_key)
                         if values[set_long] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.BUY, quantity=quantity, ordertype=OrderType.MARKET)
+                            window[set_info].Update("Код выполнен. Открыт ордер LONG")
                         if values[set_short] == True:
                             request_client.post_order(symbol=ticker, side=OrderSide.SELL, quantity=quantity, ordertype=OrderType.MARKET)
-                        window[set_info].Update("Код выполнен. Ордера закрыты...")
+                            window[set_info].Update("Код выполнен. Открыт ордер SHORT")
                         window[set_stop].update(visible=False)
                         window[set_start].update(visible=True)
                         window[set_price].update(disabled=False)
