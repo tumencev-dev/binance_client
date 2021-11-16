@@ -691,7 +691,7 @@ signal_tab = [
     ],
     [sg.Multiline(default_text='Ожидаем запуск программы...\n', autoscroll=True, size=(65,10), text_color='white', background_color='black', key='-info_signal-')],
     [
-        sg.Button('Запустить', key='-start_signal-',  size=(18,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=(5,(5,5))),
+        sg.Button('Запустить', key='-start_signal-',  size=(18,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=(0,10)),
         sg.Button('Остановить', key='-stop_signal-',  size=(18,1), button_color='red', mouseover_colors=bg_color_light, border_width=0, pad=(5,(5,5)), visible=False)
     ],
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
