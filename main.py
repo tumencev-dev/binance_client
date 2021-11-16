@@ -69,7 +69,7 @@ def get_info(window):
     price_2 = '{:.4f}'.format(price_2).replace(",", ".")
     if ticker == "USDT" or len(ticker) < 7:
         window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
-        window['-info_ticker_volume-'].update('\nОшибка в рассчетах! Повторите ввод')
+        window['-info_ticker_volume-'].update('\nОшибка в рассчетах. Повторите ввод')
         window['-copy1-'].update(disabled=True)
         window['-copy2-'].update(disabled=True)
         window['-copy3-'].update(disabled=True)
@@ -106,8 +106,8 @@ def get_info(window):
             window['-double_increase-'].update(disabled=False)
             window['-double_decrease-'].update(disabled=False)
         except:
-            window['-info-'].update("Ошибка в рассчетах! Повторите ввод")
-            window['-info_ticker_volume-'].update('\nОшибка в рассчетах! Повторите ввод')
+            window['-info-'].update("Ошибка в рассчетах. Повторите ввод")
+            window['-info_ticker_volume-'].update('\nОшибка в рассчетах. Повторите ввод')
             window['-copy1-'].update(disabled=True)
             window['-copy2-'].update(disabled=True)
             window['-copy3-'].update(disabled=True)
@@ -448,8 +448,8 @@ menu_btn = [
         sg.Button('Торговля', border_width=0, pad=((18,1),0), size=(10,2), button_color=bg_color_light, mouseover_colors=bg_color_light, key='-btn_orders-'),
         sg.Button('Скринер', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_screener-'),
         sg.Button('Объём', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_volume-'),
+        sg.Button('Сигналы', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_instruction-'),
         sg.Button('Настройки', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_settings-'),
-        sg.Button('Инструкция', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_instruction-'),
         sg.Button('Контакты', border_width=0, pad=((1,18),0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_contacts-')
     ]
 ]
@@ -658,7 +658,44 @@ volume_tab = [
         sg.Text('', size=(9,1), pad=(0,0), background_color=bg_color, justification='center', border_width=2)
     ]
 ]
-
+signal_tab = [
+    [sg.Text('Звуковое оповещение о достижении уровня', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [
+        sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
+        sg.Combo(ticker_list, size=(15,1), key='-ticker_signal-'),
+        sg.Text('Цена:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
+        sg.Input(size=(26,1), key='-price_signal-')
+    ],
+    [
+        sg.Input(key='-alert_input_signal-', pad=((20,5), 5)),
+        sg.FileBrowse('Обзор', size=(12,1), button_color=bg_color, key='-sound_alert_btn_brw_signal-', pad=((5,20), 5))
+    ],
+    [
+        sg.Button('Проверить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, key='-alert_test_signal-', pad=((10,230),10)),
+        sg.Button('Добавить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, key='-add_row_table_signal-', pad=(10,10))
+    ],
+    [sg.Table(values=[],
+                headings=['Тикер', 'Цена', 'Оповещение'],
+                num_rows=16,
+                background_color=bg_color_light,
+                text_color='white',
+                auto_size_columns=False,
+                col_widths=[14, 18, 34],
+                justification='left',
+                pad=(5,5),
+                key='-table_signal-')
+    ],
+    [
+        sg.Button('Редактировать', key='-edit_row_table_signal-', size=(14,1), pad=((10,218),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0),
+        sg.Button('Удалить', key='-del_row_table_signal-', size=(12,1), pad=(10,10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)
+    ],
+    [sg.Multiline(default_text='Ожидаем запуск программы...\n', autoscroll=True, size=(65,10), text_color='white', background_color='black', key='-info_signal-')],
+    [
+        sg.Button('Запустить', key='-start_signal-',  size=(18,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=(5,(5,5))),
+        sg.Button('Остановить', key='-stop_signal-',  size=(18,1), button_color='red', mouseover_colors=bg_color_light, border_width=0, pad=(5,(5,5)), visible=False)
+    ],
+    [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
+]
 sound_alert_frame = [
     [sg.Checkbox('Включить звуковое оповещение об объёме', enable_events=True, key='-sound_alert_checkbox-', pad=((20,5),(15,5)))],
     [
@@ -667,7 +704,6 @@ sound_alert_frame = [
     ],
     [sg.Button('Проверить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True, key='-sound_alert_test-', pad=((20,5),(5,15)))]
 ]
-
 settings_tab = [
     [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
     [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(5,5)), default_text=g_api_key)],
@@ -678,7 +714,7 @@ settings_tab = [
     ],
     [sg.HorizontalSeparator(color='black')],
     [sg.Text('', size=(69,1), pad=(0,0), background_color=bg_color, justification='center')],
-    [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,12))],
     [
         sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
         sg.Combo(ticker_list, size=(15,1), key='-ticker_settings-'),
@@ -695,7 +731,7 @@ settings_tab = [
                 auto_size_columns=False,
                 col_widths=[14, 18, 34],
                 justification='left',
-                pad=(5,0),
+                pad=(5,(2,3)),
                 key='-settings_table-')
     ],
     [
@@ -705,16 +741,6 @@ settings_tab = [
         sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((1,8),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)
     ],
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
-]
-instruction_tab = [
-    [sg.HorizontalSeparator(pad=(240,5))],
-    [sg.Text('Инструкция в PDF формате на Яндекс-Диске', font=('Arial',10), background_color=bg_color_frame, text_color='black')],
-    [sg.VerticalSeparator(pad=(0,5))],
-    [sg.Image(data=screen_instruction_1)],
-    [sg.VerticalSeparator(pad=(0,10))],
-    [sg.Image(data=screen_instruction_2)],
-    [sg.VerticalSeparator(pad=(0,30))],
-    [sg.Button('Скачать инструкцию', font=('Arial',10), button_color=('white',bg_color), border_width=1, size=(58,2), key='-link_instruction-')]
 ]
 contacts_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
@@ -762,8 +788,8 @@ layout = [
         sg.Frame('', orders_tab, border_width=0, background_color=bg_color_frame, key='-frame_orders-', element_justification="center"),
         sg.Frame('', screener_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_screener-'),
         sg.Frame('', volume_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_volume-', element_justification="center"),
+        sg.Frame('', signal_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_instruction-', element_justification="center"),
         sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-', element_justification="center"),
-        sg.Frame('', instruction_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_instruction-', element_justification="center"),
         sg.Frame('', contacts_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_contacts-', element_justification="center")
     ]
 ]
@@ -904,8 +930,6 @@ while True:
     if event == '-copy_keep-':
         copy('TKKcVBzsrpEReYhfMYCrS9watGy3nxvgdf')
         sg.popup_quick_message('Скопировано', background_color='#2b5279', text_color='white')
-    if event == '-link_instruction-':
-        webbrowser.open("https://disk.yandex.ru/i/0UkkcWdY0UCSEw")
     if event == '-screener_start-':
         threading.Thread(target=get_depth_for_screener, args=(ticker_list, full_list, old_full_list), daemon=True).start()
     if event == '-save-':
@@ -1063,6 +1087,9 @@ while True:
         if filename != '':
             with open(filename, 'r') as json_file:
                 settings_rows_list = json.load(json_file)
+            for list_tickers in settings_rows_list:
+                if os.path.exists(list_tickers[2]) == False:
+                        list_tickers[2] = ''
             window['-settings_table-'].update(values=settings_rows_list)
             if os.path.exists(file_path) == True:
                 with open(file_path, 'r') as json_file:
@@ -1087,4 +1114,6 @@ while True:
                     new_data['tickers'][list_tickers[0]] = [list_tickers[1], list_tickers[2]]
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(new_data, f, ensure_ascii=False, indent=4)
+    if event == '-start_signal-':
+        window['-info_signal-'].update(value='test\n', append=True)
 window.close()
