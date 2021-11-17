@@ -191,7 +191,10 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
             percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
             if float(percent) <= percent_compare:
                 temp_list_depth.append(ticker.replace('USDT',''))
-                temp_list_depth.append('{:.4f}'.format(float(depth[0])))
+                if ticker == 'SHIBUSDT':
+                    temp_list_depth.append('{:.6f}'.format(float(depth[0])))
+                else:
+                    temp_list_depth.append('{:.4f}'.format(float(depth[0])))
                 temp_list_depth.append(convert(float(depth[1]), 1))
                 temp_list_depth.append(convert(amount, 0))
                 temp_list_depth.append('')
