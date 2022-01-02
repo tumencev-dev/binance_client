@@ -146,12 +146,13 @@ def play_alert_sound(alert_screener_list, full_list):
 def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     sound_alert_file = ''
     if window['ai_screener'].get() == True:
+        factor = int(window['factor'].get())
         response = requests.get(url=f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval=5m")
         data = json.loads(response.text)
         sum = 0
         for i in range(-1, -289, -1):
             sum += float(data[i][5])
-        depth_volume = sum/288
+        depth_volume = (sum/288) * factor
     else:
         for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
@@ -599,7 +600,11 @@ screener_tab = [
                 key='-screener_table-')
     ],
     [sg.ProgressBar(60 + len(ticker_list), orientation='h', bar_color=('green', bg_color_frame), size=(43, 5), key='progressbar')],
-    [sg.Checkbox('Включить интеллектуальный режим', key='ai_screener')],
+    [
+        sg.Checkbox('Включить интеллектуальный режим', enable_events=True, key='ai_screener'),
+        sg.Text('Множитель:'),
+        sg.Input(default_text = "1", key='factor')
+    ],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
@@ -1132,4 +1137,15 @@ while True:
                     json.dump(new_data, f, ensure_ascii=False, indent=4)
     if event == '-start_signal-':
         window['-info_signal-'].update(value='test\n', append=True)
+    if event == 'ai_screener':
+        if window['ai_screener'].get() == True:
+            window['-rb_1-'].update(disabled=True)
+            window['-rb_2-'].update(disabled=True)
+            window['-rb_3-'].update(disabled=True)
+            window['-rb_4-'].update(disabled=True)
+        else:
+            window['-rb_1-'].update(disabled=False)
+            window['-rb_2-'].update(disabled=False)
+            window['-rb_3-'].update(disabled=False)
+            window['-rb_4-'].update(disabled=False)
 window.close()
