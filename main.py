@@ -145,7 +145,15 @@ def play_alert_sound(alert_screener_list, full_list):
 
 def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     sound_alert_file = ''
-    for i in range(1,5):
+    if window['ai_screener'].get() == True:
+        response = requests.get(url=f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval=5m")
+        data = json.loads(response.text)
+        sum = 0
+        for i in range(-1, -289, -1):
+            sum += float(data[i][5])
+        depth_volume = sum/288
+    else:
+        for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
                     depth_volume = 250000
@@ -173,9 +181,10 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
                 percent_compare = 6
     for i in range(0, len(settings_rows_list)):
         if ticker == settings_rows_list[i][0]:
-            depth_volume = float(settings_rows_list[i][1])
+            if window['ai_screener'].get() == False:
+                depth_volume = float(settings_rows_list[i][1])
             sound_alert_file = settings_rows_list[i][2]
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=50")
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
@@ -186,7 +195,10 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     temp_list_row = []
     row_number = 1
     for depth in l_depth:
-        amount = float(depth[1]) * float(depth[0])
+        if window['ai_screener'].get() == False:
+            amount = float(depth[1]) * float(depth[0])
+        else:
+            amount = float(depth[1])
         if amount >= depth_volume:
             percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
             if float(percent) <= percent_compare:
@@ -578,7 +590,7 @@ screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
                 headings=['Тикер','Цена','Объём','Объём в $', 'Время', 'До уровня'],
-                num_rows=37,
+                num_rows=35,
                 background_color=bg_color_light,
                 text_color='black',
                 auto_size_columns=False,
@@ -587,6 +599,7 @@ screener_tab = [
                 key='-screener_table-')
     ],
     [sg.ProgressBar(60 + len(ticker_list), orientation='h', bar_color=('green', bg_color_frame), size=(43, 5), key='progressbar')],
+    [sg.Checkbox('Включить интеллектуальный режим', key='ai_screener')],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
