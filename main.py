@@ -41,7 +41,7 @@ if os.path.exists(folder_path) == True:
             settings_rows_dict = data['tickers']
             if settings_rows_dict != {}:
                 for key, value in settings_rows_dict.items():
-                    settings_rows_list.append([key, value[0], value[1]])
+                    settings_rows_list.append([key, value[0], value[1], value[2]])
 else:
     os.mkdir(folder_path)
 
@@ -61,48 +61,65 @@ def get_depth(symbol, price):
             return list[1]
 
 def get_info(window):
+    window['-big_volume_1-'].update('0')
+    window['-big_volume_2-'].update('0')
+    window['-big_volume_3-'].update('0')
+    window['-big_volume_4-'].update('0')
     window['-info-'].update("Здесь будет выводиться информация о работе программы :)")
     ticker = values['-ticker_volume-'].upper() + "USDT"
     price_1 = float(values['-price_1-'].replace(",", "."))
     price_2 = float(values['-price_3-'].replace(",", "."))
-    price_1 = '{:.4f}'.format(price_1).replace(",", ".")
-    price_2 = '{:.4f}'.format(price_2).replace(",", ".")
-    if ticker == "USDT" or len(ticker) < 7:
+    price_1 = '{:.7f}'.format(price_1).replace(",", ".")
+    price_2 = '{:.7f}'.format(price_2).replace(",", ".")
+    if ticker == "USDT" or len(ticker) < 6:
         window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         window['-info_ticker_volume-'].update('\nОшибка в рассчетах. Повторите ввод')
         window['-copy1-'].update(disabled=True)
         window['-copy2-'].update(disabled=True)
         window['-copy3-'].update(disabled=True)
         window['-copy4-'].update(disabled=True)
-        window['-copy5-'].update(disabled=True)
-        window['-copy6-'].update(disabled=True)
         window['-double_increase-'].update(disabled=True)
     else:
         try:
-            if price_1 != '0.0000':
+            if price_1 != '0.000000':
                 window['-info_orders_1-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_1))).replace('.', ','))
-            if price_2 != '0.0000':
+            if price_2 != '0.000000':
                 window['-info_orders_3-'].update('Объём по данной цене: ' + '{:.0f}'.format(float(get_depth(ticker, price_2))).replace('.', ','))
             window['-info_orders_2-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
             window['-info_orders_4-'].update("Текущая цена: " + '{:.4f}'.format(float(get_price(ticker)['price'])).replace('.', ','))
-            amount1 = 250000 / float(get_price(ticker)['price'])
-            amount2 = 500000 / float(get_price(ticker)['price'])
-            amount3 = 1000000 / float(get_price(ticker)['price'])
-            amount4 = 1000000 / float(get_price(ticker)['price'])
-            amount5 = 2000000 / float(get_price(ticker)['price'])
-            window['-big_volume_1-'].update('{:.2f}'.format(amount1).replace('.', ','))
-            window['-big_volume_2-'].update('{:.2f}'.format(amount2).replace('.', ','))
-            window['-big_volume_3-'].update('{:.2f}'.format(amount2).replace('.', ','))
-            window['-big_volume_4-'].update('{:.2f}'.format(amount3).replace('.', ','))
-            window['-big_volume_5-'].update('{:.2f}'.format(amount4).replace('.', ','))
-            window['-big_volume_6-'].update('{:.2f}'.format(amount5).replace('.', ','))
+            for i in range(0, len(settings_rows_list)):
+                if ticker == settings_rows_list[i][0]:
+                    operation_ai = settings_rows_list[i][1]
+                    factor = int(settings_rows_list[i][2])
+                    if operation_ai != '':
+                        response = requests.get(url=f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval=1h")
+                        data = json.loads(response.text)
+                        sum = 0
+                        for i in range(-1, -169, -1):
+                            sum += float(data[i][5])
+                        if operation_ai == '*':
+                            amount1 = (sum/2016) * factor
+                            amount2 = amount1 * 2
+                        else:
+                            amount1 = (sum/2016) / factor
+                            amount2 = amount1 * 2
+                        window['-big_volume_1-'].update('{:.2f}'.format(amount1).replace('.', ','))
+                        window['-big_volume_2-'].update('{:.2f}'.format(amount2).replace('.', ','))
+                        window['-copy1-'].update(disabled=False)
+                        window['-copy2-'].update(disabled=False)
+                        break
+                    else:
+                        window['-big_volume_1-'].update('{:.2f}'.format(0).replace('.', ','))
+                        window['-big_volume_2-'].update('{:.2f}'.format(0).replace('.', ','))
+                        window['-copy1-'].update(disabled=True)
+                        window['-copy2-'].update(disabled=True)
+            amount3 = 250000 / float(get_price(ticker)['price'])
+            amount4 = 500000 / float(get_price(ticker)['price'])
+            window['-big_volume_3-'].update('{:.2f}'.format(amount3).replace('.', ','))
+            window['-big_volume_4-'].update('{:.2f}'.format(amount4).replace('.', ','))
             window['-info_ticker_volume-'].update('\n' + ticker)
-            window['-copy1-'].update(disabled=False)
-            window['-copy2-'].update(disabled=False)
             window['-copy3-'].update(disabled=False)
             window['-copy4-'].update(disabled=False)
-            window['-copy5-'].update(disabled=False)
-            window['-copy6-'].update(disabled=False)
             window['-double_increase-'].update(disabled=False)
             window['-double_decrease-'].update(disabled=False)
         except:
@@ -112,8 +129,6 @@ def get_info(window):
             window['-copy2-'].update(disabled=True)
             window['-copy3-'].update(disabled=True)
             window['-copy4-'].update(disabled=True)
-            window['-copy5-'].update(disabled=True)
-            window['-copy6-'].update(disabled=True)
             window['-double_increase-'].update(disabled=True)
             window['-double_decrease-'].update(disabled=True)
 
@@ -145,16 +160,8 @@ def play_alert_sound(alert_screener_list, full_list):
 
 def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     sound_alert_file = ''
-    if window['ai_screener'].get() == True:
-        factor = int(window['factor'].get())
-        response = requests.get(url=f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval=5m")
-        data = json.loads(response.text)
-        sum = 0
-        for i in range(-1, -289, -1):
-            sum += float(data[i][5])
-        depth_volume = (sum/288) * factor
-    else:
-        for i in range(1,5):
+    operation_ai = ''
+    for i in range(1,5):
             if window[f'-rb_{i}-'].get() == True:
                 if i == 1:
                     depth_volume = 250000
@@ -182,10 +189,23 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
                 percent_compare = 6
     for i in range(0, len(settings_rows_list)):
         if ticker == settings_rows_list[i][0]:
-            if window['ai_screener'].get() == False:
-                depth_volume = float(settings_rows_list[i][1])
-            sound_alert_file = settings_rows_list[i][2]
-    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=50")
+            sound_alert_file = settings_rows_list[i][3]
+            operation_ai = settings_rows_list[i][1]
+            factor = int(settings_rows_list[i][2])
+            if operation_ai != '':
+                response = requests.get(url=f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval=1h")
+                data = json.loads(response.text)
+                sum = 0
+                for i in range(-1, -169, -1):
+                    sum += float(data[i][5])
+                if operation_ai == '*':
+                    depth_volume = (sum/2016) * factor
+                else:
+                    depth_volume = (sum/2016) / factor
+            else:
+                operation_ai = ''
+                depth_volume = float(settings_rows_list[i][2])
+    response = requests.get(url=f"https://api.binance.com/api/v3/depth?symbol={ticker}&limit=500")
     data = json.loads(response.text)
     l_bids = data['bids']
     l_asks = data['asks']
@@ -196,7 +216,7 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
     temp_list_row = []
     row_number = 1
     for depth in l_depth:
-        if window['ai_screener'].get() == False:
+        if operation_ai == '':
             amount = float(depth[1]) * float(depth[0])
         else:
             amount = float(depth[1])
@@ -204,12 +224,15 @@ def screener_active(ticker, dict_data, dict_row, alert_screener_list, key):
             percent = abs((current_price - float(depth[0]))/((current_price + float(depth[0])) / 2)) * 100
             if float(percent) <= percent_compare:
                 temp_list_depth.append(ticker.replace('USDT',''))
-                if ticker == 'SHIBUSDT':
+                if 'SHIB' in ticker:
                     temp_list_depth.append('{:.6f}'.format(float(depth[0])))
                 else:
                     temp_list_depth.append('{:.4f}'.format(float(depth[0])))
                 temp_list_depth.append(convert(float(depth[1]), 1))
-                temp_list_depth.append(convert(amount, 0))
+                if operation_ai == '':
+                    temp_list_depth.append(convert(amount, 0))
+                else:
+                    temp_list_depth.append(convert(amount * float(depth[0]), 0))
                 temp_list_depth.append('')
                 temp_list_depth.append('{:.2f}'.format(percent) + ' %')
         if temp_list_depth != []:
@@ -326,11 +349,11 @@ def the_thread_order_by_volume(window, set_price, set_qty, set_quantity, set_lon
         window['-info-'].update("Не найдены API ключи. Вам необходимо настроить программу -->")
     else:
         ticker = values['-ticker_orders-'].upper() + "USDT"
-        if ticker == "USDT" or len(ticker) < 7:
+        if ticker == "USDT" or len(ticker) < 6:
             window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         else:
             try:
-                price = '{:.4f}'.format(float(values[set_price].replace(',', '.')))
+                price = '{:.7f}'.format(float(values[set_price].replace(',', '.')))
                 qty = float(values[set_qty].replace(',', '.'))
                 quantity = values[set_quantity].replace(',', '.')
                 window[set_start].update(visible=False)
@@ -377,7 +400,7 @@ def the_thread_order_by_price(window, set_price, set_quantity, set_long, set_sho
         window['-info-'].update("Не найдены API ключи. Вам необходимо настроить программу -->")
     else:
         ticker = values['-ticker_orders-'].upper() + "USDT"
-        if ticker == "USDT" or len(ticker) < 7:
+        if ticker == "USDT" or len(ticker) < 6:
             window['-info-'].update("Кажется вы неверно заполнили поле «ТИКЕР» (Пример: BTC или btc)")
         else:
             try:
@@ -464,7 +487,7 @@ menu_btn = [
         sg.Button('Торговля', border_width=0, pad=((18,1),0), size=(10,2), button_color=bg_color_light, mouseover_colors=bg_color_light, key='-btn_orders-'),
         sg.Button('Скринер', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_screener-'),
         sg.Button('Объём', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_volume-'),
-        sg.Button('Сигналы', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_instruction-'),
+        sg.Button('Сигналы', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_instruction-', disabled=True),
         sg.Button('Настройки', border_width=0, pad=(1,0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_settings-'),
         sg.Button('Контакты', border_width=0, pad=((1,18),0), size=(10,2), button_color=bg_color, mouseover_colors=bg_color_light, key='-btn_contacts-')
     ]
@@ -591,7 +614,7 @@ screener_tab = [
     [sg.HorizontalSeparator(pad=(240,0))],
     [sg.Table(values=[],
                 headings=['Тикер','Цена','Объём','Объём в $', 'Время', 'До уровня'],
-                num_rows=35,
+                num_rows=37,
                 background_color=bg_color_light,
                 text_color='black',
                 auto_size_columns=False,
@@ -600,11 +623,6 @@ screener_tab = [
                 key='-screener_table-')
     ],
     [sg.ProgressBar(60 + len(ticker_list), orientation='h', bar_color=('green', bg_color_frame), size=(43, 5), key='progressbar')],
-    [
-        sg.Checkbox('Включить интеллектуальный режим', enable_events=True, key='ai_screener'),
-        sg.Text('Множитель:'),
-        sg.Input(default_text = "1", key='factor')
-    ],
     [
         sg.Radio('< 0,5 %', 'percent', background_color=bg_color_frame, text_color='black', pad=((5,12),4), key='-percent_1-'),
         sg.Radio('< 1 %', 'percent', background_color=bg_color_frame, text_color='black', pad=(12,4), key='-percent_2-'),
@@ -631,7 +649,7 @@ volume_tab = [
     ],
     [sg.HorizontalSeparator(color='black')],
     [sg.Text('\n', size=(70, 2), pad=(0,0), text_color='white', background_color=bg_color, justification='center', key='-info_ticker_volume-')],
-    [sg.Text('\nБОЛЬШИНСТВО МОНЕТ', size=(67,2), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=6)],
+    [sg.Text('\nИнтеллектуальный режим', size=(67,2), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=6)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
@@ -644,7 +662,7 @@ volume_tab = [
         sg.Button('Копировать', key='-copy2-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
     [sg.HorizontalSeparator(color='black')],
-    [sg.Text('МОНЕТЫ С ПОВЫШЕННОЙ ЛИКВИДНОСТЬЮ', size=(67,1), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
+    [sg.Text('\n\n\nРассчёт 250 000$ и 500 000$', size=(67,4), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
     [sg.HorizontalSeparator(color='black')],
     [
         sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
@@ -655,19 +673,6 @@ volume_tab = [
         sg.Text('Крупный объём 2 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(10,20))),
         sg.Input(size=(20,1), key='-big_volume_4-', pad=(5,(10,20))),
         sg.Button('Копировать', key='-copy4-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
-    ],
-    [sg.HorizontalSeparator(color='black')],
-    [sg.Text('ТОПОВЫЕ МОНЕТЫ', size=(67,1), pad=(0,0), text_color='white', background_color=bg_color, justification='center', border_width=8)],
-    [sg.HorizontalSeparator(color='black')],
-    [
-        sg.Text('Крупный объём 1 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(20,0))),
-        sg.Input(size=(20,1), key='-big_volume_5-', pad=(5,(20,0))),
-        sg.Button('Копировать', key='-copy5-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(20,0)))
-    ],
-    [
-        sg.Text('Крупный объём 2 = ', background_color=bg_color_frame, text_color='black', pad=((51,0),(10,20))),
-        sg.Input(size=(20,1), key='-big_volume_6-', pad=(5,(10,20))),
-        sg.Button('Копировать', key='-copy6-', disabled=True, size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((0,51),(10,20)))
     ],
     [sg.HorizontalSeparator(color='black')],
     [sg.Text('', size=(67,2), pad=(0,0), background_color=bg_color, justification='center', border_width=8)],
@@ -718,46 +723,53 @@ signal_tab = [
     [sg.HorizontalSeparator(color='black', pad=(0,(0,2)))]
 ]
 sound_alert_frame = [
-    [sg.Checkbox('Включить звуковое оповещение об объёме', enable_events=True, key='-sound_alert_checkbox-', pad=((20,5),(15,5)))],
     [
-        sg.Input(disabled=True, key='-sound_alert_input-', pad=((20,5), 5)),
+        sg.Checkbox('', enable_events=True, key='-sound_alert_checkbox-'),
+        sg.Input(disabled=True, key='-sound_alert_input-', pad=((0,5), 5)),
         sg.FileBrowse('Обзор', size=(12,1), button_color=bg_color, disabled=True, key='-sound_alert_btn_brw-', pad=((5,20), 5))
     ],
-    [sg.Button('Проверить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True, key='-sound_alert_test-', pad=((20,5),(5,15)))]
+    [sg.Button('Проверить', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True, key='-sound_alert_test-', pad=((19,5),(5,15)))]
 ]
 settings_tab = [
-    [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,10))],
+    [sg.Text('Настройка API ключей', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=((175,0), 10))],
     [sg.Text('API Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-API_KEY_IN-'), sg.Input(key='-API_KEY-', pad=((5,32),(5,5)), default_text=g_api_key)],
     [sg.Text('Secret Key:', background_color=bg_color_frame, text_color='black', size=(12,0), pad=((32,5),(5,5)), key='-SECRET_KEY_IN-'), sg.Input(key='-SECRET_KEY-', pad=((5,32),(5,5)), default_text=g_secret_key)],
     [
-        sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=(32,(5, 10)), key='-settings_info-'),
-        sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=((152,32),(5,10)))
+        sg.Button('Сохранить', key='-save-', size=(12,1), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, pad=(30,(5,10))),
+        sg.Text('Изменения сохранены', background_color=bg_color_frame, text_color=bg_color_frame, size=(20,0), pad=((168,0), (5,10)), key='-settings_info-')
     ],
     [sg.HorizontalSeparator(color='black')],
     [sg.Text('', size=(69,1), pad=(0,0), background_color=bg_color, justification='center')],
-    [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=(0,12))],
+    [sg.Text('Индивидуальные настройки монет скринера', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=((110,0), 12))],
     [
-        sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
+        sg.Text('Тикер:', font=('Arial',10), background_color=bg_color_frame, text_color='black', pad=((30,5), 5)),
         sg.Combo(ticker_list, size=(15,1), key='-ticker_settings-'),
         sg.Text('Объём в $:', font=('Arial',10), background_color=bg_color_frame, text_color='black'),
         sg.Input(size=(22,1), key='-volume_settings-')
     ],
-    [sg.Frame('', sound_alert_frame, pad=(0,(10,0)))],
-    [sg.Button('Добавить', key='-add_row_table-', size=(12,1), pad=((330,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
+    [
+        sg.Checkbox('Интеллектуальный режим', enable_events=True, pad=(17, 9), tooltip='Программа выссчитывает средний объем проторгованных монет по данному тикеру за неделю и согласно этому, отслеживает крупные объёмы более данного значения', key='ai_screener'),
+        sg.Text('Множитель:', pad=((50, 5), 9)),
+        sg.Radio('*', 'factor', background_color=bg_color_frame, text_color='black', key='factor+', default=True, disabled=True),
+        sg.Radio('/', 'factor', background_color=bg_color_frame, text_color='black', key='factor-', disabled=True),
+        sg.Input(default_text = "1", size=(5,1), pad=(5,9), key='factor', disabled=True)
+    ],
+    [sg.Frame('Включить звуковое оповещение об объёме', sound_alert_frame, pad=(10, 0))],
+    [sg.Button('Добавить', key='-add_row_table-', size=(12,1), pad=((370,0), (5,8)), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)],
     [sg.Table(values=[],
-                headings=['Тикер', 'Объём КО в $', 'Оповещение'],
+                headings=['Тикер', 'AI', 'Объём в $ / мн. AI', 'Оповещение'],
                 num_rows=12,
                 background_color=bg_color_light,
                 text_color='white',
                 auto_size_columns=False,
-                col_widths=[14, 18, 34],
+                col_widths=[12, 3, 17, 32],
                 justification='left',
                 pad=(5,(2,3)),
                 key='-settings_table-')
     ],
     [
-        sg.Button('Сохранить в файл', key='-save_to_file-', size=(17,1), pad=((5,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0),
-        sg.Button('Загрузить из файла', key='-load_to_file-', size=(17,1), pad=(5,10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0),
+        sg.Button('Сохранить в файл', key='-save_to_file-', size=(17,1), pad=((5,0),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True),
+        sg.Button('Загрузить из файла', key='-load_to_file-', size=(17,1), pad=(5,10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0, disabled=True),
         sg.Button('Редактировать', key='-edit_row_table-', size=(14,1), pad=((0,4),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0),
         sg.Button('Удалить', key='-del_row_table-', size=(12,1), pad=((1,8),10), button_color=bg_color, mouseover_colors=bg_color_light, border_width=0)
     ],
@@ -810,7 +822,7 @@ layout = [
         sg.Frame('', screener_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_screener-'),
         sg.Frame('', volume_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_volume-', element_justification="center"),
         sg.Frame('', signal_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_instruction-', element_justification="center"),
-        sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-', element_justification="center"),
+        sg.Frame('', settings_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_settings-', element_justification="left"),
         sg.Frame('', contacts_tab, border_width=0, background_color=bg_color_frame, visible=False, key='-frame_contacts-', element_justification="center")
     ]
 ]
@@ -819,7 +831,7 @@ layout = [
 # time = ntplib.NTPClient()
 # time_response = time.request('0.pool.ntp.org')
 
-window = sg.Window('BinTrade ver.5.9.5 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
+window = sg.Window('BinTrade ver.5.99 (ALPHA)', layout, font=('Arial',9), background_color=bg_color, use_default_focus=False, size=(492,700), margins=(0,0), icon=icon)
 
 while True:
     event, values = window.read()
@@ -918,10 +930,6 @@ while True:
         copy(values['-big_volume_3-'])
     if event == '-copy4-':
         copy(values['-big_volume_4-'])
-    if event == '-copy5-':
-        copy(values['-big_volume_5-'])
-    if event == '-copy6-':
-        copy(values['-big_volume_6-'])
     if event == '-ticker_orders-':
         window['-ticker_volume-'].update(values['-ticker_orders-'])
     if event == '-start1-':
@@ -989,7 +997,15 @@ while True:
     if event == '-add_row_table-':
         window['-add_row_table-'].update('Добавить')
         ticker_settings = values['-ticker_settings-']
-        volume_settings = values['-volume_settings-']
+        if window['ai_screener'].get() == True:
+            volume_settings = values['factor']
+            if window['factor+'].get() == True:
+                ai_settings = '*'
+            else:
+                ai_settings = '/'
+        else:
+            volume_settings = values['-volume_settings-']
+            ai_settings = ''
         if window['-sound_alert_checkbox-'].get() == True:
             sound_alert_settings = values['-sound_alert_input-']
         else:
@@ -1008,11 +1024,13 @@ while True:
                     if 'tickers' in old_data:
                         new_data['tickers'] = old_data['tickers']
                         new_data['tickers'][ticker_settings] = []
+                        new_data['tickers'][ticker_settings].append(ai_settings)
                         new_data['tickers'][ticker_settings].append(volume_settings)
                         new_data['tickers'][ticker_settings].append(sound_alert_settings)
                     else:
                         new_data['tickers'] = {}
                         new_data['tickers'][ticker_settings] = []
+                        new_data['tickers'][ticker_settings].append(ai_settings)
                         new_data['tickers'][ticker_settings].append(volume_settings)
                         new_data['tickers'][ticker_settings].append(sound_alert_settings)
                 with open(file_path, 'w', encoding='utf-8') as f:
@@ -1020,11 +1038,12 @@ while True:
                 temp_variable = 0
                 for list in settings_rows_list:
                     if list[0] == ticker_settings:
-                        list[1] = volume_settings
-                        list[2] = sound_alert_settings
+                        list[1] = ai_settings
+                        list[2] = volume_settings
+                        list[3] = sound_alert_settings
                         temp_variable = 1
                 if temp_variable == 0:
-                    settings_rows_list.append([ticker_settings, volume_settings, sound_alert_settings])
+                    settings_rows_list.append([ticker_settings, ai_settings, volume_settings, sound_alert_settings])
                     window['-settings_table-'].update(values=settings_rows_list)
                 else:
                     window['-settings_table-'].update(values=settings_rows_list)
@@ -1033,11 +1052,12 @@ while True:
             new_data['settings'] = {}
             new_data['tickers'] = {}
             new_data['tickers'][ticker_settings] = []
+            new_data['tickers'][ticker_settings].append(ai_settings)
             new_data['tickers'][ticker_settings].append(volume_settings)
             new_data['tickers'][ticker_settings].append(sound_alert_settings)
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
-            settings_rows_list.append([ticker_settings, volume_settings, sound_alert_settings])
+            settings_rows_list.append([ticker_settings, ai_settings, volume_settings, sound_alert_settings])
             window['-settings_table-'].update(values=settings_rows_list)
     if event == '-del_row_table-':
         if values['-settings_table-'] != []:
@@ -1061,9 +1081,22 @@ while True:
     if event == '-edit_row_table-':
         if values['-settings_table-'] != []:
             window['-ticker_settings-'].update(settings_rows_list[values['-settings_table-'][0]][0])
-            window['-volume_settings-'].update(settings_rows_list[values['-settings_table-'][0]][1])
-            if settings_rows_list[values['-settings_table-'][0]][2] != '':
-                window['-sound_alert_input-'].update(settings_rows_list[values['-settings_table-'][0]][2], disabled=False)
+            if settings_rows_list[values['-settings_table-'][0]][1] == '':
+                window['-volume_settings-'].update(settings_rows_list[values['-settings_table-'][0]][2], disabled=False)
+                window['ai_screener'].update(False)
+                window['factor+'].update(disabled=True)
+                window['factor-'].update(disabled=True)
+                window['factor'].update(disabled=True)
+            else:
+                window['-volume_settings-'].update(disabled=True)
+                window['ai_screener'].update(True)
+                if settings_rows_list[values['-settings_table-'][0]][1] == '*':
+                    window['factor+'].update(True, disabled=False)
+                else:
+                    window['factor-'].update(True, disabled=False)
+                window['factor'].update(settings_rows_list[values['-settings_table-'][0]][2], disabled=False)
+            if settings_rows_list[values['-settings_table-'][0]][3] != '':
+                window['-sound_alert_input-'].update(settings_rows_list[values['-settings_table-'][0]][3], disabled=False)
                 window['-sound_alert_checkbox-'].update(True)
                 window['-sound_alert_btn_brw-'].update(disabled=False)
                 window['-sound_alert_test-'].update(disabled=False)
@@ -1078,15 +1111,11 @@ while True:
         window['-big_volume_2-'].update(str(float(values['-big_volume_2-'].replace(',', '.')) * 2).replace('.', ','))
         window['-big_volume_3-'].update(str(float(values['-big_volume_3-'].replace(',', '.')) * 2).replace('.', ','))
         window['-big_volume_4-'].update(str(float(values['-big_volume_4-'].replace(',', '.')) * 2).replace('.', ','))
-        window['-big_volume_5-'].update(str(float(values['-big_volume_5-'].replace(',', '.')) * 2).replace('.', ','))
-        window['-big_volume_6-'].update(str(float(values['-big_volume_6-'].replace(',', '.')) * 2).replace('.', ','))
     if event == '-double_decrease-':
         window['-big_volume_1-'].update(str(float(values['-big_volume_1-'].replace(',', '.')) / 2).replace('.', ','))
         window['-big_volume_2-'].update(str(float(values['-big_volume_2-'].replace(',', '.')) / 2).replace('.', ','))
         window['-big_volume_3-'].update(str(float(values['-big_volume_3-'].replace(',', '.')) / 2).replace('.', ','))
         window['-big_volume_4-'].update(str(float(values['-big_volume_4-'].replace(',', '.')) / 2).replace('.', ','))
-        window['-big_volume_5-'].update(str(float(values['-big_volume_5-'].replace(',', '.')) / 2).replace('.', ','))
-        window['-big_volume_6-'].update(str(float(values['-big_volume_6-'].replace(',', '.')) / 2).replace('.', ','))
     if event == '-sound_alert_checkbox-':
         if window['-sound_alert_checkbox-'].get() == True:
             window['-sound_alert_input-'].update(disabled=False)
@@ -1139,13 +1168,13 @@ while True:
         window['-info_signal-'].update(value='test\n', append=True)
     if event == 'ai_screener':
         if window['ai_screener'].get() == True:
-            window['-rb_1-'].update(disabled=True)
-            window['-rb_2-'].update(disabled=True)
-            window['-rb_3-'].update(disabled=True)
-            window['-rb_4-'].update(disabled=True)
+            window['-volume_settings-'].update(disabled=True)
+            window['factor+'].update(disabled=False)
+            window['factor-'].update(disabled=False)
+            window['factor'].update(disabled=False)
         else:
-            window['-rb_1-'].update(disabled=False)
-            window['-rb_2-'].update(disabled=False)
-            window['-rb_3-'].update(disabled=False)
-            window['-rb_4-'].update(disabled=False)
+            window['-volume_settings-'].update(disabled=False)
+            window['factor+'].update(disabled=True)
+            window['factor-'].update(disabled=True)
+            window['factor'].update(disabled=True)
 window.close()
